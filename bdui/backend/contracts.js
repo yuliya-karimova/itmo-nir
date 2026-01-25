@@ -248,14 +248,66 @@ const blockContracts = {
 
   form: {
     type: 'form',
-    name: 'form',
+    name: 'Форма',
     description: 'Форма со стандартными полями',
     fields: [
-      { name: 'name', type: 'text', required: true, label: 'Имя' },
-      { name: 'email', type: 'email', required: true, label: 'Email' },
-      { name: 'phone', type: 'tel', required: false, label: 'Телефон' },
-      { name: 'message', type: 'textarea', required: true, label: 'Сообщение' },
-      { name: 'agree', type: 'checkbox', required: true, label: 'Согласие' }
+      {
+        name: 'title',
+        label: 'Заголовок',
+        type: 'text',
+        required: false,
+        placeholder: 'Введите заголовок формы'
+      },
+      {
+        name: 'description',
+        label: 'Описание',
+        type: 'textarea',
+        required: false,
+        placeholder: 'Введите описание формы',
+        rows: 3
+      },
+      {
+        name: 'submitText',
+        label: 'Текст кнопки отправки',
+        type: 'text',
+        required: false,
+        placeholder: 'Отправить'
+      },
+      {
+        name: 'fields',
+        label: 'Поля формы',
+        type: 'array',
+        required: true,
+        itemSchema: {
+          type: 'object',
+          fields: [
+            {
+              name: 'name',
+              label: 'Имя поля',
+              type: 'text',
+              required: true
+            },
+            {
+              name: 'label',
+              label: 'Подпись',
+              type: 'text',
+              required: true
+            },
+            {
+              name: 'type',
+              label: 'Тип',
+              type: 'text',
+              required: true
+            },
+            {
+              name: 'required',
+              label: 'Обязательное',
+              type: 'checkbox',
+              required: false
+            }
+          ]
+        }
+      }
     ]
   }
 };
@@ -352,7 +404,18 @@ function getDefaultBlockData(blockType) {
 
   contract.fields.forEach(field => {
     if (field.type === 'array') {
-      defaultData[field.name] = [];
+      // Для формы используем предопределенные поля по умолчанию
+      if (blockType === 'form' && field.name === 'fields') {
+        defaultData[field.name] = [
+          { name: 'name', type: 'text', required: true, label: 'Имя' },
+          { name: 'email', type: 'email', required: true, label: 'Email' },
+          { name: 'phone', type: 'tel', required: false, label: 'Телефон' },
+          { name: 'message', type: 'textarea', required: true, label: 'Сообщение' },
+          { name: 'agree', type: 'checkbox', required: true, label: 'Согласие' }
+        ];
+      } else {
+        defaultData[field.name] = [];
+      }
     } else {
       defaultData[field.name] = '';
     }
