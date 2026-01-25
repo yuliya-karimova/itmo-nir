@@ -69,89 +69,108 @@ itmo-nir/
 
 ## Развертывание BDUI проекта
 
+**Важно:** Railway не поддерживает docker-compose напрямую. Нужно создать отдельный сервис для каждого компонента.
+
 ### Шаг 1: Создание проекта BDUI
-
-**Важно:** Можно использовать один репозиторий для обоих проектов!
-
-**Через веб-интерфейс (рекомендуется):**
 
 1. Зайдите на https://railway.app
 2. Нажмите "New Project"
-3. Выберите "Deploy from GitHub repo"
-4. Выберите ваш репозиторий `itmo-nir`
-5. **Настройте Root Directory:**
-   - В настройках проекта укажите `bdui/` как корневую папку
-   - Railway будет искать docker-compose.yml в папке `bdui/`
-6. Назовите проект: "BDUI Comparison"
+3. Назовите проект: "BDUI Comparison"
+4. Выберите "Empty Project" (не подключайте GitHub пока)
 
-**Или через CLI:**
+### Шаг 2: Создание Backend сервиса
+
+1. В проекте "BDUI Comparison" нажмите "+ New"
+2. Выберите "GitHub Repo"
+3. Выберите репозиторий `itmo-nir`
+4. Настройки:
+   - **Service Name**: `backend`
+   - **Root Directory**: `bdui/backend`
+   - **Build Command**: (оставьте пустым, Railway определит из Dockerfile)
+   - **Start Command**: (оставьте пустым)
+5. Railway автоматически определит Dockerfile
+6. Нажмите "Deploy"
+
+**Переменные окружения для Backend:**
+- Откройте сервис `backend`
+- Settings → Variables → Add Variable:
+  - `PORT` = `3001`
+  - `NODE_ENV` = `production`
+
+### Шаг 3: Создание BFF сервиса
+
+1. В том же проекте "+ New" → "GitHub Repo"
+2. Выберите тот же репозиторий `itmo-nir`
+3. Настройки:
+   - **Service Name**: `bff`
+   - **Root Directory**: `bdui/bff`
+4. Нажмите "Deploy"
+
+**Переменные окружения для BFF:**
+- `PORT` = `3002`
+- `NODE_ENV` = `production`
+- `BACKEND_URL` = `${{backend.RAILWAY_PRIVATE_URL}}` (внутренний URL backend)
+
+### Шаг 4: Создание Frontend сервиса
+
+1. "+ New" → "GitHub Repo"
+2. Настройки:
+   - **Service Name**: `frontend`
+   - **Root Directory**: `bdui/frontend`
+3. Нажмите "Deploy"
+
+**Переменные окружения для Frontend (Build-time):**
+- Settings → Variables → Add Variable:
+  - `REACT_APP_BFF_URL` = `${{bff.RAILWAY_PUBLIC_URL}}` (публичный URL BFF)
+
+**Важно:** Для React переменные должны быть доступны во время сборки!
+
+### Шаг 5: Создание Admin сервиса
+
+1. "+ New" → "GitHub Repo"
+2. Настройки:
+   - **Service Name**: `admin`
+   - **Root Directory**: `bdui/admin`
+3. Нажмите "Deploy"
+
+**Переменные окружения для Admin (Build-time):**
+- `REACT_APP_BACKEND_URL` = `${{backend.RAILWAY_PUBLIC_URL}}`
+
+### Шаг 6: Получение публичных URL
+
+После деплоя каждого сервиса Railway создаст публичные URL:
+- Backend: `https://backend-production-xxxx.up.railway.app`
+- BFF: `https://bff-production-xxxx.up.railway.app`
+- Frontend: `https://frontend-production-xxxx.up.railway.app`
+- Admin: `https://admin-production-xxxx.up.railway.app`
+
+**Обновите переменные окружения:**
+- Frontend: `REACT_APP_BFF_URL` = публичный URL BFF
+- Admin: `REACT_APP_BACKEND_URL` = публичный URL Backend
+- BFF: `BACKEND_URL` = внутренний URL Backend (используйте `${{backend.RAILWAY_PRIVATE_URL}}`)
+
+После обновления переменных нужно пересобрать Frontend и Admin:
+- Откройте сервис → Settings → Redeploy
+
+### Альтернативный способ: Через Railway CLI
+
+Если предпочитаете CLI:
 
 ```bash
-cd bdui
-
-# Инициализация Railway проекта
+cd bdui/backend
 railway init
-
-# Выберите:
-# - Create a new project
-# - Название: "BDUI Comparison"
-# - Подключите GitHub репозиторий (один и тот же для обоих проектов)
-```
-
-### Шаг 2: Настройка переменных окружения
-
-Railway автоматически определит docker-compose.yml, но нужно настроить переменные:
-
-```bash
-# Установите переменные для каждого сервиса
-railway variables set PORT=3001 --service backend
-railway variables set NODE_ENV=production --service backend
-
-railway variables set PORT=3002 --service bff
-railway variables set NODE_ENV=production --service bff
-railway variables set BACKEND_URL=${{backend.RAILWAY_PRIVATE_URL}} --service bff
-
-railway variables set REACT_APP_BFF_URL=${{bff.RAILWAY_PUBLIC_URL}} --service frontend
-
-railway variables set REACT_APP_BACKEND_URL=${{backend.RAILWAY_PUBLIC_URL}} --service admin
-```
-
-**Или через веб-интерфейс:**
-1. Зайдите на https://railway.app
-2. Откройте проект "BDUI Comparison"
-3. Для каждого сервиса (backend, bff, frontend, admin):
-   - Откройте вкладку "Variables"
-   - Добавьте переменные окружения
-
-### Шаг 3: Деплой BDUI
-
-```bash
-# Railway автоматически определит docker-compose.yml
 railway up
 
-# Или через веб-интерфейс:
-# - Railway автоматически задеплоит при push в GitHub
-# - Или нажмите "Deploy" вручную
+# Для каждого сервиса отдельно
+cd ../bff
+railway init --service bff
+railway link <project-id>
+railway up
+
+# И так далее для frontend и admin
 ```
 
-### Шаг 4: Получение URL
-
-```bash
-# Получите публичные URL для каждого сервиса
-railway domain
-
-# Или через веб-интерфейс:
-# - Каждый сервис получит свой URL вида:
-#   - backend: https://bdui-backend-production.up.railway.app
-#   - bff: https://bdui-bff-production.up.railway.app
-#   - frontend: https://bdui-frontend-production.up.railway.app
-#   - admin: https://bdui-admin-production.up.railway.app
-```
-
-**Важно:** После получения URL нужно обновить переменные окружения:
-- Frontend: `REACT_APP_BFF_URL` = URL BFF сервиса
-- Admin: `REACT_APP_BACKEND_URL` = URL Backend сервиса
-- BFF: `BACKEND_URL` = внутренний URL Backend (используйте `${{backend.RAILWAY_PRIVATE_URL}}`)
+Но проще через веб-интерфейс!
 
 ---
 
@@ -159,30 +178,35 @@ railway domain
 
 ### Шаг 1: Создание проекта Classic
 
-**Через веб-интерфейс (рекомендуется):**
-
 1. На Railway Dashboard нажмите "New Project"
-2. Выберите "Deploy from GitHub repo"
-3. **Выберите тот же репозиторий** `itmo-nir` (тот же, что и для BDUI!)
-4. **Настройте Root Directory:**
-   - Укажите `classic/` как корневую папку
-   - Railway будет искать docker-compose.yml в папке `classic/`
-5. Назовите проект: "Classic Comparison"
+2. Назовите проект: "Classic Comparison"
+3. Выберите "Empty Project"
 
-**Или через CLI:**
+### Шаг 2: Создание Backend сервиса
 
-```bash
-cd ../classic
+1. В проекте "+ New" → "GitHub Repo"
+2. Выберите репозиторий `itmo-nir`
+3. Настройки:
+   - **Service Name**: `backend`
+   - **Root Directory**: `classic/backend`
+4. Нажмите "Deploy"
 
-# Инициализация нового Railway проекта
-railway init
+**Переменные окружения:**
+- `PORT` = `3011`
+- `NODE_ENV` = `production`
 
-# Выберите:
-# - Create a new project
-# - Название: "Classic Comparison"
-# - Подключите тот же GitHub репозиторий (itmo-nir)
-# - Это будет отдельный проект, но из того же репозитория!
-```
+### Шаг 3: Создание Frontend сервиса
+
+1. "+ New" → "GitHub Repo"
+2. Настройки:
+   - **Service Name**: `frontend`
+   - **Root Directory**: `classic/frontend`
+3. Нажмите "Deploy"
+
+**Переменные окружения (Build-time):**
+- `REACT_APP_BACKEND_URL` = `${{backend.RAILWAY_PUBLIC_URL}}`
+
+**Важно:** После получения публичного URL Backend обновите переменную и пересоберите Frontend!
 
 ### Шаг 2: Настройка переменных окружения
 

@@ -73,6 +73,7 @@ docker compose up --build
 - **[DEPLOYMENT_GUIDE.md](DEPLOYMENT_GUIDE.md)** - 🚀 **Руководство по развертыванию на облаке** для более реалистичного сравнения TTM
 - **[PLATFORM_COMPARISON.md](PLATFORM_COMPARISON.md)** - 📊 **Сравнение Render vs Railway** - какой выбрать для развертывания
 - **[RAILWAY_SETUP.md](RAILWAY_SETUP.md)** - 🚂 **Пошаговая инструкция по развертыванию на Railway** - как задеплоить оба проекта
+- **[RAILWAY_QUICK_FIX.md](RAILWAY_QUICK_FIX.md)** - 🔧 **Быстрое решение проблемы** "Railpack could not determine" - создание отдельных сервисов
 
 ## Документация НИР
 
