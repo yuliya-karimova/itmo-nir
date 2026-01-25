@@ -91,6 +91,16 @@ itmo-nir/
 5. Railway автоматически определит Dockerfile
 6. Нажмите "Deploy"
 
+**Включение публичного доступа для Backend (опционально, но рекомендуется):**
+
+После деплоя:
+1. Откройте сервис `backend`
+2. Вкладка **"Settings"** → **"Networking"** → **"Public Networking"**
+3. Нажмите **"Generate Domain"**
+4. **Укажите порт: `3001`** (Backend слушает на порту 3001)
+5. Нажмите **"Generate Domain"**
+6. Это нужно, если Admin будет обращаться к Backend через публичный URL
+
 **Переменные окружения для Backend:**
 - Откройте сервис `backend`
 - Settings → Variables → Add Variable:
@@ -106,6 +116,16 @@ itmo-nir/
    - **Root Directory**: `bdui/bff`
 4. Нажмите "Deploy"
 
+**Включение публичного доступа для BFF (обязательно!):**
+
+После деплоя:
+1. Откройте сервис `bff`
+2. Вкладка **"Settings"** → **"Networking"** → **"Public Networking"**
+3. Нажмите **"Generate Domain"**
+4. **Укажите порт: `3002`** (BFF слушает на порту 3002)
+5. Нажмите **"Generate Domain"**
+6. Это обязательно, так как Frontend обращается к BFF через публичный URL
+
 **Переменные окружения для BFF:**
 - `PORT` = `3002`
 - `NODE_ENV` = `production`
@@ -119,11 +139,24 @@ itmo-nir/
    - **Root Directory**: `bdui/frontend`
 3. Нажмите "Deploy"
 
+**Включение публичного доступа (обязательно для фронтенда!):**
+
+После деплоя:
+1. Откройте сервис `frontend`
+2. Вкладка **"Settings"**
+3. Раздел **"Networking"** → **"Public Networking"**
+4. Нажмите **"Generate Domain"**
+5. **Укажите порт: `80`** (nginx слушает на порту 80)
+6. Нажмите **"Generate Domain"**
+7. Railway создаст публичный URL вида: `https://frontend-production-xxxx.up.railway.app`
+
 **Переменные окружения для Frontend (Build-time):**
 - Settings → Variables → Add Variable:
   - `REACT_APP_BFF_URL` = `${{bff.RAILWAY_PUBLIC_URL}}` (публичный URL BFF)
 
-**Важно:** Для React переменные должны быть доступны во время сборки!
+**Важно:** 
+- Для React переменные должны быть доступны во время сборки!
+- Публичный домен для фронтенда обязателен - без него пользователи не смогут открыть сайт
 
 ### Шаг 5: Создание Admin сервиса
 
@@ -133,24 +166,63 @@ itmo-nir/
    - **Root Directory**: `bdui/admin`
 3. Нажмите "Deploy"
 
+**Включение публичного доступа (обязательно для админки!):**
+
+После деплоя:
+1. Откройте сервис `admin`
+2. Вкладка **"Settings"** → **"Networking"** → **"Public Networking"**
+3. Нажмите **"Generate Domain"**
+4. **Укажите порт: `80`** (nginx слушает на порту 80)
+5. Нажмите **"Generate Domain"**
+6. Railway создаст публичный URL вида: `https://admin-production-xxxx.up.railway.app`
+
 **Переменные окружения для Admin (Build-time):**
 - `REACT_APP_BACKEND_URL` = `${{backend.RAILWAY_PUBLIC_URL}}`
 
+**Важно:** Публичный домен для админки обязателен - без него вы не сможете открыть админ-панель
+
 ### Шаг 6: Получение публичных URL
 
-После деплоя каждого сервиса Railway создаст публичные URL:
+**Где найти URL:**
+
+1. **В интерфейсе Railway:**
+   - Откройте проект "BDUI Comparison"
+   - Нажмите на сервис (например, "backend")
+   - Вкладка **"Settings"**
+   - Раздел **"Networking"**
+   - Там будет **"Public Domain"** - это публичный URL
+   - Пример: `https://backend-production-xxxx.up.railway.app`
+
+2. **В логах деплоя:**
+   - После успешного деплоя в логах будет строка с URL
+   - Или в разделе "Deployments" → последний деплой
+
+**После деплоя каждого сервиса Railway создаст публичные URL:**
 - Backend: `https://backend-production-xxxx.up.railway.app`
-- BFF: `https://bff-production-xxxx.up.railway.app`
-- Frontend: `https://frontend-production-xxxx.up.railway.app`
-- Admin: `https://admin-production-xxxx.up.railway.app`
+- BFF: `https://bff-production-yyyy.up.railway.app`
+- Frontend: `https://frontend-production-zzzz.up.railway.app`
+- Admin: `https://admin-production-wwww.up.railway.app`
 
 **Обновите переменные окружения:**
-- Frontend: `REACT_APP_BFF_URL` = публичный URL BFF
-- Admin: `REACT_APP_BACKEND_URL` = публичный URL Backend
-- BFF: `BACKEND_URL` = внутренний URL Backend (используйте `${{backend.RAILWAY_PRIVATE_URL}}`)
 
-После обновления переменных нужно пересобрать Frontend и Admin:
-- Откройте сервис → Settings → Redeploy
+1. **BFF сервис:**
+   - Settings → Variables
+   - `BACKEND_URL` = `${{backend.RAILWAY_PRIVATE_URL}}` (внутренний URL)
+   - Или вручную: `http://backend.railway.internal:3001`
+
+2. **Frontend сервис:**
+   - Settings → Variables
+   - `REACT_APP_BFF_URL` = публичный URL BFF (скопируйте из Settings → Networking)
+   - Пример: `https://bff-production-yyyy.up.railway.app`
+
+3. **Admin сервис:**
+   - Settings → Variables
+   - `REACT_APP_BACKEND_URL` = публичный URL Backend
+   - Пример: `https://backend-production-xxxx.up.railway.app`
+
+**После обновления переменных нужно пересобрать Frontend и Admin:**
+- Откройте сервис → Settings → "Redeploy" или "Deploy"
+- Или сделайте новый commit и push (если настроен автодеплой)
 
 ### Альтернативный способ: Через Railway CLI
 
@@ -191,6 +263,15 @@ railway up
    - **Root Directory**: `classic/backend`
 4. Нажмите "Deploy"
 
+**Включение публичного доступа для Backend (обязательно!):**
+
+После деплоя:
+1. Откройте сервис `backend`
+2. Вкладка **"Settings"** → **"Networking"** → **"Public Networking"**
+3. Нажмите **"Generate Domain"**
+4. **Укажите порт: `3011`** (Backend слушает на порту 3011)
+5. Нажмите **"Generate Domain"**
+
 **Переменные окружения:**
 - `PORT` = `3011`
 - `NODE_ENV` = `production`
@@ -202,6 +283,15 @@ railway up
    - **Service Name**: `frontend`
    - **Root Directory**: `classic/frontend`
 3. Нажмите "Deploy"
+
+**Включение публичного доступа для Frontend (обязательно!):**
+
+После деплоя:
+1. Откройте сервис `frontend`
+2. Вкладка **"Settings"** → **"Networking"** → **"Public Networking"**
+3. Нажмите **"Generate Domain"**
+4. **Укажите порт: `80`** (nginx слушает на порту 80)
+5. Нажмите **"Generate Domain"**
 
 **Переменные окружения (Build-time):**
 - `REACT_APP_BACKEND_URL` = `${{backend.RAILWAY_PUBLIC_URL}}`
