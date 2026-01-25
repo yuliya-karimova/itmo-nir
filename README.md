@@ -72,6 +72,7 @@ docker compose up --build
 - **[STEP_BY_STEP_COMPARISON.md](STEP_BY_STEP_COMPARISON.md)** - ⭐ **Подробная пошаговая инструкция** с командами и примерами
 - **[DEPLOYMENT_GUIDE.md](DEPLOYMENT_GUIDE.md)** - 🚀 **Руководство по развертыванию на облаке** для более реалистичного сравнения TTM
 - **[PLATFORM_COMPARISON.md](PLATFORM_COMPARISON.md)** - 📊 **Сравнение Render vs Railway** - какой выбрать для развертывания
+- **[RAILWAY_SETUP.md](RAILWAY_SETUP.md)** - 🚂 **Пошаговая инструкция по развертыванию на Railway** - как задеплоить оба проекта
 
 ## Документация НИР
 
