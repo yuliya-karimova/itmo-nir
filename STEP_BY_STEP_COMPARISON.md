@@ -38,9 +38,9 @@ mkdir -p comparison_results/artifacts/{lighthouse,har,profiles}
 
 ---
 
-## Сценарий S1: Малая правка (TTM и трудоёмкость)
+## Сценарий S1: Простая правка (TTM и трудоёмкость)
 
-### Цель: Изменить текст кнопки и цвет фона
+### Цель: Изменить текст в баннере и добавить новый текстовый блок
 
 ---
 
@@ -65,12 +65,18 @@ echo "BDUI S1 Start: $(date -u +"%Y-%m-%dT%H:%M:%SZ")" > ../comparison_results/b
 #### Шаг 1.3: Выполнение изменения через админ-панель
 
 1. Откройте админ-панель: http://localhost:3003
-2. Найдите страницу с кнопкой (например, главная страница)
-3. Найдите блок с кнопками
+2. Найдите главную страницу (home)
+3. Найдите блок типа "banner"
 4. Измените:
-   - Текст кнопки: "info" → "Информация"
-   - Добавьте новый блок с измененным цветом фона
-5. Сохраните изменения
+   - Заголовок баннера: "Добро пожаловать!" → "Добро пожаловать на наш сайт!"
+   - Подзаголовок: "Backend Driven UI Demo" → "Используем современные технологии"
+5. Добавьте новый текстовый блок:
+   - Нажмите "Добавить блок"
+   - Выберите тип "text"
+   - Заполните:
+     - Заголовок: "Новое объявление"
+     - Содержимое: "Мы рады сообщить о запуске нового функционала!"
+6. Сохраните изменения
 
 # Фиксируем время завершения изменения
 echo "BDUI S1 Change Complete: $(date -u +"%Y-%m-%dT%H:%M:%SZ")" >> ../comparison_results/bdui/s1_timeline.txt
@@ -114,27 +120,38 @@ echo "Classic S1 Start: $(date -u +"%Y-%m-%dT%H:%M:%SZ")" > ../comparison_result
 
 1. Откройте файл компонента страницы:
 ```bash
-# Находим файл с кнопками
+# Находим файл главной страницы
 cat frontend/src/pages/HomePage.js
 ```
 
-2. Изменяем код:
+2. Изменяем захардкоженные данные в компоненте:
 ```javascript
 // Было:
-<a href={button.link} className={`btn btn-${button.style || 'primary'}`}>
-  {button.text}
-</a>
+const banner = {
+  title: 'Добро пожаловать!',
+  subtitle: 'Classic Frontend Approach Demo',
+  // ...
+};
 
-// Стало (если нужно изменить стиль):
-<a href={button.link} className={`btn btn-${button.style || 'primary'}`} style={{backgroundColor: '#e74c3c'}}>
-  {button.text === 'info' ? 'Информация' : button.text}
-</a>
+// Стало:
+const banner = {
+  title: 'Добро пожаловать на наш сайт!',
+  subtitle: 'Используем современные технологии',
+  // ...
+};
 ```
 
-3. Или изменяем данные на бэкенде:
-```bash
-# Редактируем backend/data/pages.json
-# Меняем text: "info" на text: "Информация"
+3. Добавляем новый текстовый блок в JSX:
+```javascript
+// После секции about, перед features, добавляем:
+<section className="section text-section">
+  <div className="container">
+    <h2>Новое объявление</h2>
+    <div className="content">
+      Мы рады сообщить о запуске нового функционала!
+    </div>
+  </div>
+</section>
 ```
 
 4. Пересобираем фронтенд:
@@ -187,6 +204,225 @@ EOF
 **Оценка по шкале 1-5** (из НИР2):
 - BDUI: 5 баллов (мгновенно, < 1 часа)
 - Classic: 2-3 балла (неделя+ для мобильных, несколько дней для веба)
+
+---
+
+## Сценарий S1.5: Сложная правка - Добавление новой страницы (TTM)
+
+### Цель: Создать новую страницу "О нас" с баннером, текстовым блоком и блоком карточек
+
+---
+
+### BDUI подход
+
+#### Шаг 1.5.1: Фиксация начального времени
+```bash
+echo "BDUI S1.5 Start: $(date -u +"%Y-%m-%dT%H:%M:%SZ")" > ../comparison_results/bdui/s1.5_timeline.txt
+```
+
+#### Шаг 1.5.2: Создание новой страницы через админ-панель
+
+1. Откройте админ-панель: http://localhost:3003
+2. Нажмите "Создать страницу" или перейдите на `/pages/new`
+3. Заполните данные страницы:
+   - ID: `about`
+   - Заголовок: `О нас`
+   - Slug: `/about`
+4. Добавьте блоки в следующем порядке:
+   
+   **Блок 1 - Баннер:**
+   - Тип: `banner`
+   - Заголовок: `О нашей компании`
+   - Подзаголовок: `Мы работаем с 2020 года`
+   - URL изображения: `https://via.placeholder.com/1200x400`
+   - Текст кнопки: `Связаться с нами`
+   - Ссылка кнопки: `/contact`
+   
+   **Блок 2 - Текстовый блок:**
+   - Тип: `text`
+   - Заголовок: `Наша история`
+   - Содержимое: `Компания была основана с целью создания инновационных решений...`
+   
+   **Блок 3 - Блок с карточками:**
+   - Тип: `cards`
+   - Заголовок блока: `Наши преимущества`
+   - Добавьте 3 карточки:
+     - Карточка 1: "Опыт", "Более 5 лет на рынке", изображение
+     - Карточка 2: "Команда", "50+ специалистов", изображение
+     - Карточка 3: "Проекты", "200+ успешных проектов", изображение
+
+5. Сохраните страницу
+
+# Фиксируем время завершения
+echo "BDUI S1.5 Change Complete: $(date -u +"%Y-%m-%dT%H:%M:%SZ")" >> ../comparison_results/bdui/s1.5_timeline.txt
+```
+
+#### Шаг 1.5.3: Проверка результата
+```bash
+# Открываем новую страницу
+open http://localhost:3000/about
+
+# Фиксируем время, когда страница появилась
+echo "BDUI S1.5 Visible: $(date -u +"%Y-%m-%dT%H:%M:%SZ")" >> ../comparison_results/bdui/s1.5_timeline.txt
+```
+
+**Ожидаемый результат BDUI**: Новая страница доступна сразу после сохранения (0-5 минут)
+
+---
+
+### Классический подход
+
+#### Шаг 1.5.4: Фиксация начального времени
+```bash
+echo "Classic S1.5 Start: $(date -u +"%Y-%m-%dT%H:%M:%SZ")" > ../comparison_results/classic/s1.5_timeline.txt
+```
+
+#### Шаг 1.5.5: Создание новой страницы в коде
+
+1. Создайте новый компонент страницы:
+```bash
+# Создаем файл для новой страницы
+touch frontend/src/pages/AboutPage.js
+```
+
+2. Напишите компонент `AboutPage.js`:
+```javascript
+import React from 'react';
+import axios from 'axios';
+import './AboutPage.css';
+
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:3011';
+
+function AboutPage() {
+  // Захардкоженные данные
+  const banner = {
+    title: 'О нашей компании',
+    subtitle: 'Мы работаем с 2020 года',
+    imageUrl: 'https://via.placeholder.com/1200x400',
+    buttonText: 'Связаться с нами',
+    buttonLink: '/contact'
+  };
+
+  const history = {
+    title: 'Наша история',
+    content: 'Компания была основана с целью создания инновационных решений...'
+  };
+
+  // Features получаем с бэка (если нужны)
+  const [features, setFeatures] = React.useState([]);
+  // ... код загрузки features
+
+  return (
+    <div className="app">
+      <header className="header">
+        <div className="container">
+          <h1>О нас</h1>
+        </div>
+      </header>
+      <main className="main">
+        {/* Баннер */}
+        <section className="section banner-section">
+          {/* ... код баннера */}
+        </section>
+        
+        {/* История */}
+        <section className="section text-section">
+          {/* ... код текстового блока */}
+        </section>
+        
+        {/* Преимущества - захардкоженные карточки */}
+        <section className="section features-section">
+          <div className="container">
+            <h2>Наши преимущества</h2>
+            <div className="features-grid">
+              <div className="feature-card">
+                <h3>Опыт</h3>
+                <p>Более 5 лет на рынке</p>
+              </div>
+              <div className="feature-card">
+                <h3>Команда</h3>
+                <p>50+ специалистов</p>
+              </div>
+              <div className="feature-card">
+                <h3>Проекты</h3>
+                <p>200+ успешных проектов</p>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+      <footer className="footer">
+        <div className="container">
+          <p>Classic Frontend Approach Demo</p>
+        </div>
+      </footer>
+    </div>
+  );
+}
+
+export default AboutPage;
+```
+
+3. Добавьте роут в `App.js`:
+```javascript
+import AboutPage from './pages/AboutPage';
+
+// В Routes добавить:
+<Route path="/about" element={<AboutPage />} />
+```
+
+4. Создайте CSS файл `AboutPage.css` (или используйте общие стили)
+
+5. Пересоберите фронтенд:
+```bash
+cd frontend
+docker compose exec frontend npm run build
+cd ..
+docker compose restart frontend
+```
+
+6. Фиксируем время завершения:
+```bash
+echo "Classic S1.5 Build Complete: $(date -u +"%Y-%m-%dT%H:%M:%SZ")" >> ../comparison_results/classic/s1.5_timeline.txt
+```
+
+#### Шаг 1.5.6: Проверка результата
+```bash
+open http://localhost:3010/about
+echo "Classic S1.5 Visible: $(date -u +"%Y-%m-%dT%H:%M:%SZ")" >> ../comparison_results/classic/s1.5_timeline.txt
+```
+
+**Ожидаемый результат Classic**: Требуется создание нового компонента, добавление роута, пересборка (20-40 минут)
+
+---
+
+### Шаг 1.5.7: Сравнение результатов
+
+```bash
+cat > ../comparison_results/s1.5_comparison.txt << EOF
+Сценарий S1.5: Добавление новой страницы
+
+BDUI:
+- Время начала: [из s1.5_timeline.txt]
+- Время завершения: [из s1.5_timeline.txt]
+- TTM: [разница в минутах]
+- Требовалась пересборка: НЕТ
+- Создание нового компонента: НЕТ
+
+Classic:
+- Время начала: [из s1.5_timeline.txt]
+- Время завершения: [из s1.5_timeline.txt]
+- TTM: [разница в минутах]
+- Требовалась пересборка: ДА
+- Создание нового компонента: ДА
+
+Вывод: BDUI быстрее на [X] минут
+EOF
+```
+
+**Оценка по шкале 1-5**:
+- BDUI: 5 баллов (мгновенно, без пересборки)
+- Classic: 1-2 балла (требуется создание компонента, пересборка, деплой)
 
 ---
 
@@ -538,9 +774,10 @@ open http://localhost:3010
 
 | Сценарий | BDUI (баллы) | Classic (баллы) | Победитель |
 |----------|--------------|-----------------|------------|
-| S1: Малая правка | 5 | 2 | BDUI |
+| S1: Простая правка (изменить текст + добавить блок) | 5 | 2 | BDUI |
+| S1.5: Сложная правка (новая страница) | 5 | 1 | BDUI |
 | S3: A/B тест | 5 | 3 | BDUI |
-| **Среднее** | **5** | **2.5** | **BDUI** |
+| **Среднее** | **5** | **2** | **BDUI** |
 
 ## Параметр 2: Объём передаваемых данных
 
