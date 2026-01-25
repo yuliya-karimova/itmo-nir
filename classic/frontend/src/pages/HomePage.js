@@ -9,8 +9,8 @@ const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:3011'
 function HomePage() {
   // Данные захардкожены на фронтенде
   const banner = {
-    title: 'Добро пожаловать на наш сайт!',
-    subtitle: 'Используем современные технологии Classic Frontend Approach Demo',
+    title: 'Добро пожаловать!',
+    subtitle: 'Используем современные технологии - Classic Frontend Approach Demo',
     imageUrl: 'https://img.freepik.com/free-vector/abstract-paper-style-background_23-2150744378.jpg?semt=ais_hybrid&w=740&q=80',
     buttonText: 'Узнать больше',
     buttonLink: '/info'
@@ -110,6 +110,15 @@ function HomePage() {
             <h2>Новое объявление</h2>
             <div className="content">
               Мы рады сообщить о запуске нового функционала!
+            </div>
+          </div>
+        </section>
+
+        <section className="section text-section">
+          <div className="container">
+            <h2>Новое объявление 2</h2>
+            <div className="content">
+              Мы рады сообщить о запуске еще более нового функционала!
             </div>
           </div>
         </section>

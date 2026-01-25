@@ -129,7 +129,14 @@ itmo-nir/
 **Переменные окружения для BFF:**
 - `PORT` = `3002`
 - `NODE_ENV` = `production`
-- `BACKEND_URL` = `${{backend.RAILWAY_PRIVATE_URL}}` (внутренний URL backend)
+- `BACKEND_URL` = публичный URL Backend (например, `https://backend-production-xxxx.up.railway.app`)
+
+**Важно:** 
+- Railway переменные `${{backend.RAILWAY_PRIVATE_URL}}` могут не работать
+- Лучше использовать публичный URL Backend:
+  1. Откройте сервис `backend` → Settings → Networking
+  2. Скопируйте **Public Domain** (например, `https://backend-production-xxxx.up.railway.app`)
+  3. В BFF сервисе установите: `BACKEND_URL` = этот URL
 
 ### Шаг 4: Создание Frontend сервиса
 
