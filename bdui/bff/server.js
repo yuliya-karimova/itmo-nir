@@ -111,6 +111,12 @@ app.get('/api/page/:slug?', async (req, res) => {
             link: button.link,
             style: button.style
           }))
+        }),
+        ...(block.type === 'form' && {
+          title: block.data.title,
+          description: block.data.description,
+          submitText: block.data.submitText || 'Отправить',
+          fields: block.data.fields || []
         })
       }))
     };

@@ -245,6 +245,19 @@ const blockContracts = {
       // Нет настраиваемых полей: данные приходят с бэка автоматически
     ]
   },
+
+  form: {
+    type: 'form',
+    name: 'form',
+    description: 'Форма со стандартными полями',
+    fields: [
+      { name: 'name', type: 'text', required: true, label: 'Имя' },
+      { name: 'email', type: 'email', required: true, label: 'Email' },
+      { name: 'phone', type: 'tel', required: false, label: 'Телефон' },
+      { name: 'message', type: 'textarea', required: true, label: 'Сообщение' },
+      { name: 'agree', type: 'checkbox', required: true, label: 'Согласие' }
+    ]
+  }
 };
 
 /**

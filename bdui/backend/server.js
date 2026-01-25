@@ -9,7 +9,6 @@ const {
   getBlockTypes,
   getBlockContract,
   validateBlockData,
-  getDefaultBlockData
 } = require('./contracts');
 
 const app = express();

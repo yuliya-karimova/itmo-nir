@@ -4,6 +4,7 @@ import CardsBlock from './CardsBlock';
 import BannerBlock from './BannerBlock';
 import GalleryBlock from './GalleryBlock';
 import ButtonsBlock from './ButtonsBlock';
+import FormBlock from './FormBlock';
 
 function BlockRenderer({ block }) {
   if (block.hidden) return null;
@@ -19,6 +20,8 @@ function BlockRenderer({ block }) {
       return <GalleryBlock block={block} />;
     case 'buttons':
       return <ButtonsBlock block={block} />;
+    case 'form':
+      return <FormBlock block={block} />;
     default:
       return null;
   }
