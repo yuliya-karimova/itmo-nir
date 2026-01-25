@@ -70,6 +70,8 @@ docker compose up --build
 
 - **[COMPARISON.md](COMPARISON.md)** - Общая методика и описание параметров сравнения
 - **[STEP_BY_STEP_COMPARISON.md](STEP_BY_STEP_COMPARISON.md)** - ⭐ **Подробная пошаговая инструкция** с командами и примерами
+- **[DEPLOYMENT_GUIDE.md](DEPLOYMENT_GUIDE.md)** - 🚀 **Руководство по развертыванию на облаке** для более реалистичного сравнения TTM
+- **[PLATFORM_COMPARISON.md](PLATFORM_COMPARISON.md)** - 📊 **Сравнение Render vs Railway** - какой выбрать для развертывания
 
 ## Документация НИР
 

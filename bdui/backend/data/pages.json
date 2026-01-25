@@ -9,8 +9,8 @@
           "id": "3f5e26fb-16b0-4760-90d0-0ed661aea043",
           "type": "banner",
           "data": {
-            "title": "Добро пожаловать!",
-            "subtitle": "Backend Driven UI Demo",
+            "title": "Добро пожаловать на наш сайт!",
+            "subtitle": "Используем современные технологии Backend Driven UI Demo",
             "imageUrl": "https://img.freepik.com/free-vector/abstract-paper-style-background_23-2150744378.jpg?semt=ais_hybrid&w=740&q=80",
             "buttonText": "Узнать больше",
             "buttonLink": "/info"
@@ -97,6 +97,15 @@
           "id": "block-1766502000405",
           "type": "travelBanner",
           "data": {},
+          "hidden": false
+        },
+        {
+          "id": "block-1769352053713",
+          "type": "text",
+          "data": {
+            "title": "Новое объявление",
+            "content": "Мы рады сообщить о запуске нового функционала!"
+          },
           "hidden": false
         }
       ]
