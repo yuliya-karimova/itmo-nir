@@ -584,53 +584,123 @@ cp ~/Downloads/*.har ../comparison_results/artifacts/har/bdui_s2_before.har
 
 #### Шаг 2.3: Измерение производительности
 
+**Перед добавлением формы:**
+
+1. Откройте страницу без формы (например, `https://frontend-production-xxxx.up.railway.app/`)
+2. Откройте Chrome DevTools (F12)
+3. Перейдите на вкладку **Lighthouse**
+4. Выберите **Performance** (можно также выбрать другие категории)
+5. Нажмите **Generate report**
+6. Дождитесь завершения анализа
+7. Сохраните результаты:
+   - Скриншот метрик
+   - Или экспортируйте JSON: нажмите на три точки → "Save as JSON"
+   - Сохраните как `bdui_s2_before_lighthouse.json` в `comparison_results/artifacts/lighthouse/`
+
+**После добавления формы:**
+
+1. Откройте ту же страницу, но уже с формой
+2. Повторите шаги 2-7 выше
+3. Сохраните результаты как `bdui_s2_after_lighthouse.json`
+
+**Метрики для записи и сравнения:**
+
+Запишите значения для обоих измерений:
+
+| Метрика | До (без формы) | После (с формой) | Разница |
+|---------|---------------|------------------|---------|
+| First Contentful Paint (FCP) | | | |
+| Time to Interactive (TTI) | | | |
+| Total Blocking Time (TBT) | | | |
+| Cumulative Layout Shift (CLS) | | | |
+| Largest Contentful Paint (LCP) | | | |
+| Speed Index | | | |
+
+**Альтернатива через Lighthouse CLI:**
+
 ```bash
-# Запускаем Lighthouse
-lighthouse http://localhost:3000 \
+# Перед добавлением формы
+lighthouse https://frontend-production-xxxx.up.railway.app/ \
   --output=json \
-  --output-path=../comparison_results/artifacts/lighthouse/bdui_s2.json \
+  --output-path=../comparison_results/artifacts/lighthouse/bdui_s2_before_lighthouse.json \
   --chrome-flags="--headless"
 
-# Или через Chrome DevTools:
-# 1. Открываем DevTools (F12)
-# 2. Вкладка Lighthouse
-# 3. Выбираем "Performance"
-# 4. Нажимаем "Generate report"
-# 5. Сохраняем результаты
+# После добавления формы
+lighthouse https://frontend-production-xxxx.up.railway.app/ \
+  --output=json \
+  --output-path=../comparison_results/artifacts/lighthouse/bdui_s2_after_lighthouse.json \
+  --chrome-flags="--headless"
 ```
-
-**Метрики для записи:**
-- First Contentful Paint (FCP)
-- Time to Interactive (TTI)
-- Total Blocking Time (TBT)
-- Cumulative Layout Shift (CLS)
 
 #### Шаг 2.4: Измерение ресурсов
 
 **CPU и RAM на клиенте:**
-```bash
-# Chrome DevTools → Performance
-# 1. Нажимаем Record (круглая кнопка)
-# 2. Обновляем страницу
-# 3. Ждем полной загрузки
-# 4. Останавливаем запись
-# 5. Смотрим на графики CPU и Memory
-# 6. Экспортируем профиль: Right-click → Save profile
-```
+
+**Перед добавлением формы:**
+
+1. Откройте страницу без формы
+2. Откройте Chrome DevTools (F12)
+3. Перейдите на вкладку **Performance**
+4. Нажмите **Record** (круглая кнопка вверху слева)
+5. Обновите страницу (F5 или Ctrl+R)
+6. Дождитесь полной загрузки страницы
+7. Остановите запись (нажмите Stop или кнопку Record снова)
+8. Посмотрите на графики **CPU** и **Memory**:
+   - Найдите пиковые значения CPU (обычно в процентах)
+   - Найдите пиковое использование памяти (в MB)
+9. Экспортируйте профиль: Right-click на графике → "Save profile"
+10. Сохраните как `bdui_s2_before_performance.json` в `comparison_results/artifacts/profiles/`
+11. Запишите пиковые значения:
+    - Пик CPU: ___%
+    - Пик RAM: ___ MB
+
+**После добавления формы:**
+
+1. Откройте ту же страницу, но уже с формой
+2. Повторите шаги 2-11 выше
+3. Сохраните профиль как `bdui_s2_after_performance.json`
+4. Запишите пиковые значения:
+    - Пик CPU: ___%
+    - Пик RAM: ___ MB
+
+**Сравнение:**
+- Разница CPU: ___%
+- Разница RAM: ___ MB
 
 **CPU и RAM на сервере:**
+
+**Перед добавлением формы:**
+
+Для локального тестирования:
 ```bash
-# Подключаемся к контейнеру
+# Подключаемся к контейнеру backend
 docker compose exec backend sh
 
-# Внутри контейнера (если Node.js):
-# Используем встроенные инструменты или
+# Внутри контейнера:
 top
-# Записываем пиковые значения
-
-# Или используем docker stats
-docker stats bdui-backend-1 --format "table {{.CPUPerc}}\t{{.MemUsage}}" > ../comparison_results/bdui/server_resources.txt
+# Записываем пиковые значения CPU и Memory
+# Или используем docker stats в отдельном терминале:
+docker stats bdui-backend-1 --format "table {{.CPUPerc}}\t{{.MemUsage}}" > ../comparison_results/bdui/server_resources_before.txt
 ```
+
+Для облачного деплоя (Railway):
+1. Откройте сервис `backend` на Railway
+2. Перейдите в **Metrics** или **Logs**
+3. Посмотрите графики CPU и Memory
+4. Запишите пиковые значения во время загрузки страницы
+
+**После добавления формы:**
+
+Повторите те же шаги и запишите значения для сравнения.
+
+**Метрики для записи:**
+
+| Ресурс | До (без формы) | После (с формой) | Разница |
+|--------|----------------|------------------|---------|
+| CPU клиент (пик, %) | | | |
+| RAM клиент (пик, MB) | | | |
+| CPU сервер (пик, %) | | | |
+| RAM сервер (пик, MB) | | | |
 
 ---
 
