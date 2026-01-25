@@ -4,7 +4,7 @@ function AboutPage() {
   const banner = {
     title: 'О нашей компании',
     subtitle: 'Мы работаем с 2020 года',
-    imageUrl: 'https://via.placeholder.com/1200x400',
+    imageUrl: 'https://img.freepik.com/free-vector/abstract-paper-style-background_23-2150744378.jpg?semt=ais_hybrid&w=740&q=80',
     buttonText: 'Связаться с нами',
     buttonLink: '/contact'
   };
