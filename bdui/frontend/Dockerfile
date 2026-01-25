@@ -2,6 +2,10 @@ FROM node:18-alpine as build
 
 WORKDIR /app
 
+# Передаем переменную окружения во время сборки
+ARG REACT_APP_BFF_URL=http://localhost:3002
+ENV REACT_APP_BFF_URL=$REACT_APP_BFF_URL
+
 COPY package.json .
 RUN npm install
 

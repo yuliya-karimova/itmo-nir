@@ -34,10 +34,10 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+      args:
+        - REACT_APP_BFF_URL=http://localhost:3002
     ports:
       - "3000:80"
-    environment:
-      - REACT_APP_BFF_URL=http://localhost:3002
     depends_on:
       - bff
     networks:
@@ -47,10 +47,10 @@ services:
     build:
       context: ./admin
       dockerfile: Dockerfile
+      args:
+        - REACT_APP_BACKEND_URL=http://localhost:3001
     ports:
       - "3003:80"
-    environment:
-      - REACT_APP_BACKEND_URL=http://localhost:3001
     depends_on:
       - backend
     networks:
