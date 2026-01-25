@@ -248,7 +248,7 @@ const blockContracts = {
 
   form: {
     type: 'form',
-    name: 'Форма',
+    name: 'Форма c полями',
     description: 'Форма со стандартными полями',
     fields: [
       {
