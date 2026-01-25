@@ -1,0 +1,185 @@
+{
+  "pages": [
+    {
+      "id": "home",
+      "title": "Главная страница",
+      "slug": "/",
+      "blocks": [
+        {
+          "id": "3f5e26fb-16b0-4760-90d0-0ed661aea043",
+          "type": "banner",
+          "data": {
+            "title": "Добро пожаловать!",
+            "subtitle": "Backend Driven UI Demo",
+            "imageUrl": "https://img.freepik.com/free-vector/abstract-paper-style-background_23-2150744378.jpg?semt=ais_hybrid&w=740&q=80",
+            "buttonText": "Узнать больше",
+            "buttonLink": "/info"
+          },
+          "hidden": false
+        },
+        {
+          "id": "block-1766502541124",
+          "type": "buttons",
+          "data": {
+            "title": "",
+            "description": "",
+            "buttons": [
+              {
+                "id": "buttons-1766502556074",
+                "text": "Информация",
+                "link": "/info",
+                "style": "primary"
+              },
+              {
+                "id": "buttons-1766502614992",
+                "text": "hello",
+                "link": "/hello",
+                "style": "secondary"
+              }
+            ]
+          },
+          "hidden": false
+        },
+        {
+          "id": "9c20cf43-acab-4e5c-b153-abf5ee10941d",
+          "type": "text",
+          "data": {
+            "title": "О проекте",
+            "content": "Это демонстрационное приложение показывает возможности Backend Driven UI. Контент страницы управляется через бэкенд и может быть изменен без пересборки фронтенда."
+          }
+        },
+        {
+          "id": "block-1766499574387",
+          "type": "promoBanner",
+          "data": {
+            "title": "Промо баннер (авто)",
+            "subtitle": "Данные приходят с бэка",
+            "imageUrl": "https://image.slidesdocs.com/responsive-images/background/web-development-and-app-programming-with-seo-friendly-design-on-computer-powerpoint-background_8ad84ff8f9__960_540.jpg",
+            "buttonText": "Купить",
+            "buttonLink": "/buy"
+          },
+          "hidden": false
+        },
+        {
+          "id": "25a37f7d-0cc6-4d50-b195-6df643faccb2",
+          "type": "cards",
+          "data": {
+            "title": "Наши возможности",
+            "cards": [
+              {
+                "id": "b637e78c-6fcb-4e72-9d79-e5d0a73d0da8",
+                "title": "Динамический контент",
+                "description": "Контент управляется через бэкенд",
+                "imageUrl": "https://media.proglib.io/posts/2021/02/24/5ccab15a3f7623fe3283f1907fd3cd2d.webp"
+              },
+              {
+                "id": "96848470-980a-4cf0-90bc-b4c291096ce6",
+                "title": "Гибкая настройка",
+                "description": "Легко добавлять и изменять блоки",
+                "imageUrl": "https://static.tildacdn.com/tild3831-3535-4932-a662-656464333136/templates2.jpg"
+              },
+              {
+                "id": "ad39e45c-9d88-4db7-84cf-34e27a8b4ac2",
+                "title": "Быстрое обновление",
+                "description": "Изменения применяются мгновенно",
+                "imageUrl": "https://daily.wordreference.com/wp-content/uploads/2017/04/fast.jpg"
+              }
+            ]
+          }
+        },
+        {
+          "id": "block-1766499957561",
+          "type": "promoBanner",
+          "data": {},
+          "hidden": false
+        },
+        {
+          "id": "block-1766502000405",
+          "type": "travelBanner",
+          "data": {},
+          "hidden": false
+        }
+      ]
+    },
+    {
+      "id": "8b39ff00-500b-441f-aeb9-8c6caf37ea20",
+      "title": "info",
+      "slug": "/info",
+      "blocks": [
+        {
+          "id": "block-1766095488013",
+          "type": "text",
+          "data": {
+            "title": "Привет",
+            "content": "Содержимое текстового блока"
+          }
+        },
+        {
+          "id": "block-1766502115486",
+          "type": "travelBanner",
+          "data": {},
+          "hidden": false
+        },
+        {
+          "id": "block-1766502371822",
+          "type": "newYearBanner",
+          "data": {},
+          "hidden": false
+        }
+      ]
+    },
+    {
+      "id": "5097f013-fe59-410a-bc1a-7d4b4485d668",
+      "title": "hello",
+      "slug": "/hello",
+      "blocks": [
+        {
+          "id": "block-1766096046050",
+          "type": "text",
+          "data": {
+            "title": "Привет! Я новый текстовый блок!",
+            "content": "Ты сюда можешь писать всё, что хочешь )"
+          }
+        },
+        {
+          "id": "block-1766096068378",
+          "type": "banner",
+          "data": {
+            "title": "Мой лучший баннер",
+            "subtitle": "Подзаголовок мечты",
+            "imageUrl": "https://t4.ftcdn.net/jpg/02/56/10/07/360_F_256100731_qNLp6MQ3FjYtA3Freu9epjhsAj2cwU9c.jpg",
+            "buttonText": "Перейти",
+            "buttonLink": "/info"
+          }
+        },
+        {
+          "id": "block-1766098621563",
+          "type": "cards",
+          "data": {
+            "title": "Заголовок блока",
+            "cards": [
+              {
+                "id": "cards-1766098628496",
+                "title": "Первая",
+                "description": "Описание",
+                "imageUrl": ""
+              },
+              {
+                "id": "cards-1766098645830",
+                "title": "Вторая",
+                "description": "Описание",
+                "imageUrl": ""
+              },
+              {
+                "id": "cards-1766098650046",
+                "title": "Третья",
+                "description": "Описание",
+                "imageUrl": ""
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

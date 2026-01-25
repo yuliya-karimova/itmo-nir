@@ -1,0 +1,42 @@
+{
+  "features": [
+    {
+      "id": "1",
+      "title": "Статический контент",
+      "description": "Структура UI определена во фронтенде",
+      "imageUrl": "https://media.proglib.io/posts/2021/02/24/5ccab15a3f7623fe3283f1907fd3cd2d.webp"
+    },
+    {
+      "id": "2",
+      "title": "Предсказуемая структура",
+      "description": "Легко понять, где что находится",
+      "imageUrl": "https://static.tildacdn.com/tild3831-3535-4932-a662-656464333136/templates2.jpg"
+    },
+    {
+      "id": "3",
+      "title": "Быстрая загрузка",
+      "description": "UI уже в приложении, не нужно ждать",
+      "imageUrl": "https://daily.wordreference.com/wp-content/uploads/2017/04/fast.jpg"
+    }
+  ],
+  "helloFeatures": [
+    {
+      "id": "1",
+      "title": "Первая",
+      "description": "Описание",
+      "imageUrl": ""
+    },
+    {
+      "id": "2",
+      "title": "Вторая",
+      "description": "Описание",
+      "imageUrl": ""
+    },
+    {
+      "id": "3",
+      "title": "Третья",
+      "description": "Описание",
+      "imageUrl": ""
+    }
+  ]
+}

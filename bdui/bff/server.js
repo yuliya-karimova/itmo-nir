@@ -1,0 +1,188 @@
+const express = require('express');
+const cors = require('cors');
+const axios = require('axios');
+
+const app = express();
+const PORT = process.env.PORT || 3002;
+const BACKEND_URL = process.env.BACKEND_URL || 'http://localhost:3001';
+
+app.use(cors());
+app.use(express.json());
+
+// BFF баннеры
+const BFF_BANNER_STATE = {
+  title: 'BFF Banner',
+  subtitle: 'Стейт задаётся на BFF',
+  imageUrl: 'https://image.slidesdocs.com/responsive-images/background/web-development-and-app-programming-with-seo-friendly-design-on-computer-powerpoint-background_8ad84ff8f9__960_540.jpg',
+  buttonText: 'Подробнее',
+  buttonLink: '/info'
+};
+
+const BFF_TRAVEL_BANNER_STATE = {
+  title: 'Travel Banner',
+  subtitle: 'Мой кастомный баннер на основе стандартного баннера',
+  imageUrl: 'https://img.freepik.com/free-photo/person-traveling-enjoying-their-vacation_23-2151383050.jpg?semt=ais_hybrid&w=740',
+  buttonText: 'Подробнее',
+  buttonLink: '/info'
+};
+
+const BFF_NEW_YEAR_BANNER_STATE = {
+  title: 'New Year Banner',
+  subtitle: 'Мой кастомный баннер на основе стандартного баннера',
+  imageUrl: 'https://img.goodfon.ru/wallpaper/nbig/7/2d/zima-sneg-ukrasheniia-shary-elka-novyi-god-rozhdestvo-new--2.webp',
+  buttonText: 'Подробнее',
+  buttonLink: '/info'
+};
+
+// Получить страницу по slug (оптимизированная версия для фронтенда)
+app.get('/api/page/:slug?', async (req, res) => {
+  try {
+    // Если slug не указан или пустой, используем '/' для корневой страницы
+    let slug = req.params.slug || '/';
+    let backendUrl;
+    // Для корневой страницы используем специальный endpoint
+    if (slug === '' || slug === '/') {
+      backendUrl = `${BACKEND_URL}/api/pages/root`;
+    } else {
+      // Нормализуем slug: добавляем начальный слеш если его нет
+      const normalizedSlug = slug.startsWith('/') ? slug : '/' + slug;
+      // Для остальных страниц кодируем slug
+      const encodedSlug = encodeURIComponent(normalizedSlug);
+      backendUrl = `${BACKEND_URL}/api/pages/${encodedSlug}`;
+    }
+    const response = await axios.get(backendUrl);
+    const page = response.data;
+    
+    // Трансформируем данные для фронтенда
+    const transformedPage = {
+      id: page.id,
+      title: page.title,
+      blocks: page.blocks.map(block => ({
+        id: block.id,
+        type: block.type,
+        hidden: !!block.hidden,
+        // Нормализуем структуру данных в зависимости от типа блока
+        ...(block.type === 'text' && {
+          title: block.data.title,
+          content: block.data.content
+        }),
+        ...(block.type === 'banner' && {
+          ...block.data
+        }),
+        ...(block.type === 'promoBanner' && {
+          // promoBanner мапится на фронтовый banner, данные приходят с бэка
+          type: 'banner',
+          ...BFF_BANNER_STATE
+        }),
+        ...(block.type === 'travelBanner' && {
+          // travelBanner мапится на фронтовый banner, данные приходят с бэка
+          type: 'banner',
+          ...BFF_TRAVEL_BANNER_STATE
+        }),
+        ...(block.type === 'newYearBanner' && {
+          // newYearBanner мапится на фронтовый banner, данные приходят с бэка
+          type: 'banner',
+          ...BFF_NEW_YEAR_BANNER_STATE
+        }),
+        ...(block.type === 'cards' && {
+          title: block.data.title,
+          cards: block.data.cards.map(card => ({
+            id: card.id,
+            title: card.title,
+            description: card.description,
+            imageUrl: card.imageUrl
+          }))
+        }),
+        ...(block.type === 'gallery' && {
+          title: block.data.title,
+          images: block.data.images.map(image => ({
+            id: image.id,
+            url: image.url,
+            alt: image.alt,
+            caption: image.caption
+          }))
+        }),
+        ...(block.type === 'buttons' && {
+          title: block.data.title,
+          description: block.data.description,
+          buttons: block.data.buttons.map(button => ({
+            id: button.id,
+            text: button.text,
+            link: button.link,
+            style: button.style
+          }))
+        })
+      }))
+    };
+    
+    res.json(transformedPage);
+  } catch (error) {
+    if (error.response && error.response.status === 404) {
+      return res.status(404).json({ error: 'Page not found' });
+    }
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Получить все страницы (для навигации)
+app.get('/api/pages', async (req, res) => {
+  try {
+    const response = await axios.get(`${BACKEND_URL}/api/pages`);
+    const pages = response.data;
+    
+    // Возвращаем только необходимые данные для навигации
+    const navigationPages = pages.map(page => ({
+      id: page.id,
+      title: page.title,
+      slug: page.slug
+    }));
+    
+    res.json(navigationPages);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Получить все контракты блоков
+app.get('/api/contracts', async (req, res) => {
+  try {
+    const response = await axios.get(`${BACKEND_URL}/api/contracts`);
+    res.json(response.data);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Получить контракт для конкретного типа блока
+app.get('/api/contracts/:blockType', async (req, res) => {
+  try {
+    const response = await axios.get(`${BACKEND_URL}/api/contracts/${req.params.blockType}`);
+    res.json(response.data);
+  } catch (error) {
+    if (error.response && error.response.status === 404) {
+      return res.status(404).json({ error: 'Contract not found' });
+    }
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Получить список доступных типов блоков
+app.get('/api/block-types', async (req, res) => {
+  try {
+    const response = await axios.get(`${BACKEND_URL}/api/block-types`);
+    res.json(response.data);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Health check
+app.get('/health', (req, res) => {
+  res.json({ status: 'ok', backend: BACKEND_URL });
+});
+
+app.listen(PORT, () => {
+  console.log(`BFF server running on port ${PORT}`);
+  console.log(`Backend URL: ${BACKEND_URL}`);
+});
+

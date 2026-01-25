@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "3011:3011"
+    environment:
+      - PORT=3011
+      - NODE_ENV=production
+    volumes:
+      - ./backend/data:/app/data
+    networks:
+      - classic-network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        - REACT_APP_BACKEND_URL=http://localhost:3011
+    ports:
+      - "3010:80"
+    depends_on:
+      - backend
+    networks:
+      - classic-network
+
+networks:
+  classic-network:
+    driver: bridge
