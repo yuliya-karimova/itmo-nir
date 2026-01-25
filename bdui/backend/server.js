@@ -9,6 +9,7 @@ const {
   getBlockTypes,
   getBlockContract,
   validateBlockData,
+  getDefaultBlockData,
 } = require('./contracts');
 
 const app = express();
@@ -257,6 +258,17 @@ app.get('/api/contracts/:blockType', (req, res) => {
 // Получить список доступных типов блоков
 app.get('/api/block-types', (req, res) => {
   res.json(getBlockTypes());
+});
+
+// Получить данные блока по умолчанию для указанного типа
+app.get('/api/block-types/:type/default-data', (req, res) => {
+  try {
+    const blockType = req.params.type;
+    const defaultData = getDefaultBlockData(blockType);
+    res.json(defaultData);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
 });
 
 // Health check

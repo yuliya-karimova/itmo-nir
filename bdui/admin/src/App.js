@@ -140,16 +140,29 @@ function PageEditor() {
     }
   };
 
-  const addBlock = (type) => {
-    const contract = contracts[type];
-    const defaultData = contract ? getDefaultBlockDataFromContract(contract) : {};
-    const newBlock = {
-      id: `block-${Date.now()}`,
-      type,
-      data: defaultData,
-      hidden: false
-    };
-    setPage({ ...page, blocks: [...page.blocks, newBlock] });
+  const addBlock = async (type) => {
+    try {
+      // Получаем данные по умолчанию с бэкенда
+      const response = await axios.get(`${BACKEND_URL}/api/block-types/${type}/default-data`);
+      const defaultData = response.data;
+      const newBlock = {
+        id: `block-${Date.now()}`,
+        type,
+        data: defaultData,
+        hidden: false
+      };
+      setPage({ ...page, blocks: [...page.blocks, newBlock] });
+    } catch (error) {
+      console.error('Error fetching default block data:', error);
+      // Fallback: создаем блок с пустыми данными
+      const newBlock = {
+        id: `block-${Date.now()}`,
+        type,
+        data: {},
+        hidden: false
+      };
+      setPage({ ...page, blocks: [...page.blocks, newBlock] });
+    }
   };
 
   const removeBlock = (blockId) => {
@@ -446,6 +459,29 @@ function ContractBasedEditor({ block, contract, onUpdate }) {
             <div key={item.id || itemIndex} className="array-item-editor">
               {field.itemSchema.fields.map(itemField => {
                 const itemValue = item[itemField.name] || '';
+                // Для checkbox не показываем label сверху, он будет inline
+                if (itemField.type === 'checkbox') {
+                  return (
+                    <div key={itemField.name} className="form-group">
+                      <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
+                        <input
+                          type="checkbox"
+                          checked={item[itemField.name] || false}
+                          style={{ width: 'auto' }}
+                          onChange={(e) => {
+                            const newArray = [...block.data[field.name]];
+                            newArray[itemIndex] = { ...item, [itemField.name]: e.target.checked };
+                            onUpdate({ [field.name]: newArray });
+                          }}
+                        />
+                        <span>
+                          {itemField.label}
+                          {itemField.required && <span className="required">*</span>}
+                        </span>
+                      </label>
+                    </div>
+                  );
+                }
                 return (
                   <div key={itemField.name} className="form-group">
                     <label>
@@ -465,7 +501,7 @@ function ContractBasedEditor({ block, contract, onUpdate }) {
                       />
                     ) : (
                       <input
-                        type={itemField.type === 'url' ? 'url' : 'text'}
+                        type={itemField.type === 'url' ? 'url' : itemField.type || 'text'}
                         value={itemValue}
                         onChange={(e) => {
                           const newArray = [...block.data[field.name]];
@@ -493,7 +529,11 @@ function ContractBasedEditor({ block, contract, onUpdate }) {
             onClick={() => {
               const newItem = { id: `${field.name}-${Date.now()}` };
               field.itemSchema.fields.forEach(itemField => {
-                newItem[itemField.name] = '';
+                if (itemField.type === 'checkbox') {
+                  newItem[itemField.name] = false;
+                } else {
+                  newItem[itemField.name] = '';
+                }
               });
               const currentArray = block.data[field.name] || [];
               onUpdate({ [field.name]: [...currentArray, newItem] });
@@ -548,31 +588,6 @@ function getBlockTypeName(type, contracts = {}) {
     banner: 'Баннер'
   };
   return names[type] || type;
-}
-
-function getDefaultBlockData(type) {
-  switch (type) {
-    case 'text':
-      return { title: '', content: '' };
-    case 'banner':
-      return { title: '', subtitle: '', imageUrl: '', buttonText: '', buttonLink: '' };
-    case 'cards':
-      return { title: '', cards: [] };
-    default:
-      return {};
-  }
-}
-
-function getDefaultBlockDataFromContract(contract) {
-  const defaultData = {};
-  contract.fields.forEach(field => {
-    if (field.type === 'array') {
-      defaultData[field.name] = [];
-    } else {
-      defaultData[field.name] = '';
-    }
-  });
-  return defaultData;
 }
 
 export default App;
