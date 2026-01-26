@@ -238,6 +238,8 @@ function PageEditor() {
                 block={block}
                 index={index}
                 contract={contracts[block.type]}
+                contracts={contracts}
+                blockTypes={blockTypes}
                 onUpdate={(data) => updateBlock(block.id, data)}
                 onToggleHidden={(hidden) => {
                   setPage({
@@ -258,13 +260,19 @@ function PageEditor() {
   );
 }
 
-function BlockEditor({ block, index, contract, onUpdate, onToggleHidden, onRemove, onMove, canMoveUp, canMoveDown }) {
+function BlockEditor({ block, index, contract, contracts = {}, blockTypes = [], onUpdate, onToggleHidden, onRemove, onMove, canMoveUp, canMoveDown }) {
   const [expanded, setExpanded] = React.useState(true);
 
   const renderEditor = () => {
     // Если есть контракт, используем его для генерации формы
     if (contract) {
-      return <ContractBasedEditor block={block} contract={contract} onUpdate={onUpdate} />;
+      return <ContractBasedEditor 
+        block={block} 
+        contract={contract} 
+        onUpdate={onUpdate}
+        contracts={contracts}
+        blockTypes={blockTypes}
+      />;
     }
     
     // Fallback на старый способ для обратной совместимости
@@ -446,10 +454,166 @@ function BlockEditor({ block, index, contract, onUpdate, onToggleHidden, onRemov
 }
 
 // Компонент для генерации формы на основе контракта
-function ContractBasedEditor({ block, contract, onUpdate }) {
+function ContractBasedEditor({ block, contract, onUpdate, contracts = {}, blockTypes = [] }) {
   const renderField = (field, value, onChange, path = '') => {
     const fieldPath = path ? `${path}.${field.name}` : field.name;
     const fieldValue = path ? value : (block.data[field.name] || '');
+
+    // Специальная обработка для вложенных блоков в condition
+    if (field.type === 'nestedBlock') {
+      const nestedBlock = block.data[field.name] || { type: '', data: {} };
+      const nestedBlockType = nestedBlock.type || '';
+      const nestedContract = nestedBlockType ? contracts[nestedBlockType] : null;
+      
+      return (
+        <div key={field.name} className="nested-block-field">
+          <h4>{field.label}</h4>
+          
+          {/* Выбор типа блока */}
+          <div className="form-group">
+            <label>
+              Тип блока
+              {field.required && <span className="required">*</span>}
+            </label>
+            <select
+              value={nestedBlockType}
+              onChange={(e) => {
+                const newType = e.target.value;
+                const newContract = contracts[newType];
+                let newData = {};
+                
+                // Инициализируем данные на основе контракта
+                if (newContract && newContract.fields) {
+                  newContract.fields.forEach(f => {
+                    if (f.type === 'array') {
+                      newData[f.name] = [];
+                    } else {
+                      newData[f.name] = '';
+                    }
+                  });
+                }
+                
+                onUpdate({ 
+                  [field.name]: { 
+                    type: newType, 
+                    data: newData 
+                  } 
+                });
+              }}
+            >
+              <option value="">Выберите тип блока</option>
+              {blockTypes
+                .filter(bt => bt.type !== 'condition') // Исключаем condition чтобы избежать рекурсии
+                .map(bt => (
+                  <option key={bt.type} value={bt.type}>
+                    {bt.name}
+                  </option>
+                ))}
+            </select>
+          </div>
+          
+          {/* Редактор данных блока на основе контракта */}
+          {nestedBlockType && nestedContract && (
+            <div className="nested-block-editor" style={{ marginTop: '1rem', padding: '1rem', border: '1px solid #ddd', borderRadius: '4px' }}>
+              <h5 style={{ marginTop: 0 }}>Данные блока "{nestedContract.name}"</h5>
+              <ContractBasedEditor
+                block={{ data: nestedBlock.data || {} }}
+                contract={nestedContract}
+                onUpdate={(data) => {
+                  onUpdate({ 
+                    [field.name]: { 
+                      ...nestedBlock, 
+                      data: { ...nestedBlock.data, ...data } 
+                    } 
+                  });
+                }}
+                contracts={contracts}
+                blockTypes={blockTypes}
+              />
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    if (field.type === 'object' && field.fields) {
+      // Вложенный объект (например, trueBlock, falseBlock в condition)
+      const objectValue = block.data[field.name] || {};
+      return (
+        <div key={field.name} className="object-field">
+          <h4>{field.label}</h4>
+          {field.fields.map(subField => {
+            const subValue = objectValue[subField.name] || '';
+            if (subField.name === 'data' && subField.type === 'textarea') {
+              // Для data поля в condition блоке - JSON редактор
+              let jsonValue = '';
+              try {
+                jsonValue = typeof subValue === 'string' ? subValue : JSON.stringify(subValue, null, 2);
+              } catch {
+                jsonValue = '';
+              }
+              return (
+                <div key={subField.name} className="form-group">
+                  <label>
+                    {subField.label}
+                    {subField.required && <span className="required">*</span>}
+                  </label>
+                  <textarea
+                    value={jsonValue}
+                    onChange={(e) => {
+                      const newObject = { ...objectValue };
+                      try {
+                        // Пытаемся распарсить JSON
+                        newObject[subField.name] = JSON.parse(e.target.value);
+                      } catch {
+                        // Если не JSON, сохраняем как строку
+                        newObject[subField.name] = e.target.value;
+                      }
+                      onUpdate({ [field.name]: newObject });
+                    }}
+                    placeholder={subField.placeholder}
+                    rows={subField.rows || 5}
+                    style={{ fontFamily: 'monospace' }}
+                  />
+                  <small style={{ color: '#666' }}>
+                    Введите JSON объект с данными блока (например: {"{"}"title": "Заголовок", "content": "Текст"{"}"})
+                  </small>
+                </div>
+              );
+            }
+            return (
+              <div key={subField.name} className="form-group">
+                <label>
+                  {subField.label}
+                  {subField.required && <span className="required">*</span>}
+                </label>
+                {subField.type === 'textarea' ? (
+                  <textarea
+                    value={subValue}
+                    onChange={(e) => {
+                      const newObject = { ...objectValue, [subField.name]: e.target.value };
+                      onUpdate({ [field.name]: newObject });
+                    }}
+                    placeholder={subField.placeholder}
+                    rows={subField.rows || 3}
+                  />
+                ) : (
+                  <input
+                    type="text"
+                    value={subValue}
+                    onChange={(e) => {
+                      const newObject = { ...objectValue, [subField.name]: e.target.value };
+                      onUpdate({ [field.name]: newObject });
+                    }}
+                    placeholder={subField.placeholder}
+                  />
+                )}
+              </div>
+            );
+          })}
+        </div>
+      );
+    }
 
     if (field.type === 'array' && field.itemSchema) {
       return (

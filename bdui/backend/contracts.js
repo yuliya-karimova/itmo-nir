@@ -246,6 +246,40 @@ const blockContracts = {
     ]
   },
 
+  condition: {
+    type: 'condition',
+    name: 'Условный блок',
+    description: 'Блок с условием: показывает разный контент в зависимости от заголовка запроса',
+    fields: [
+      {
+        name: 'header',
+        label: 'Имя заголовка',
+        type: 'text',
+        required: true,
+        placeholder: 'x-user-variant, user-agent, x-browser и т.д.'
+      },
+      {
+        name: 'value',
+        label: 'Значение для сравнения',
+        type: 'text',
+        required: true,
+        placeholder: 'A, B, Chrome, Firefox и т.д.'
+      },
+      {
+        name: 'trueBlock',
+        label: 'Блок если условие true',
+        type: 'nestedBlock',
+        required: true
+      },
+      {
+        name: 'falseBlock',
+        label: 'Блок если условие false',
+        type: 'nestedBlock',
+        required: true
+      }
+    ]
+  },
+
   form: {
     type: 'form',
     name: 'Форма c полями',
@@ -416,6 +450,20 @@ function getDefaultBlockData(blockType) {
       } else {
         defaultData[field.name] = [];
       }
+    } else if (field.type === 'nestedBlock') {
+      // Для вложенных блоков в condition
+      defaultData[field.name] = { type: '', data: {} };
+    } else if (field.type === 'object' && field.fields) {
+      // Для вложенных объектов
+      defaultData[field.name] = {};
+      field.fields.forEach(subField => {
+        if (subField.name === 'data' && subField.type === 'textarea') {
+          // Для data поля - пустой JSON объект
+          defaultData[field.name][subField.name] = {};
+        } else {
+          defaultData[field.name][subField.name] = '';
+        }
+      });
     } else {
       defaultData[field.name] = '';
     }

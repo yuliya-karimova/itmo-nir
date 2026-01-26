@@ -107,6 +107,29 @@
             "content": "Мы рады сообщить о запуске нового функционала!"
           },
           "hidden": false
+        },
+        {
+          "id": "block-1769458807179",
+          "type": "condition",
+          "data": {
+            "header": "x-user-variant-a",
+            "value": "A",
+            "trueBlock": {
+              "type": "text",
+              "data": {
+                "title": "Мой блок для варианта А",
+                "content": "Содержимое"
+              }
+            },
+            "falseBlock": {
+              "type": "text",
+              "data": {
+                "title": "Мой блок для варианта B",
+                "content": "Содержимое"
+              }
+            }
+          },
+          "hidden": false
         }
       ]
     },

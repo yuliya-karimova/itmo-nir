@@ -53,72 +53,108 @@ app.get('/api/page/:slug?', async (req, res) => {
     const response = await axios.get(backendUrl);
     const page = response.data;
     
+    // Сначала обрабатываем condition блоки и заменяем их на выбранные блоки
+    const processedBlocks = page.blocks.flatMap(block => {
+      // Обработка condition блока
+      if (block.type === 'condition') {
+        const headerName = block.data?.header || 'x-user-variant';
+        const expectedValue = block.data?.value || '';
+        
+        // Express нормализует заголовки в нижний регистр, но сохраняет оригинальные
+        // Проверяем оба варианта (с дефисами и без)
+        const headerKey = headerName.toLowerCase();
+        const actualValue = req.headers[headerKey] || req.headers[headerName] || '';
+        
+        // Проверяем условие: если заголовок равен ожидаемому значению - показываем trueBlock, иначе falseBlock
+        const conditionMet = actualValue === expectedValue || actualValue.toLowerCase() === expectedValue.toLowerCase();
+        const selectedBlock = conditionMet ? block.data?.trueBlock : block.data?.falseBlock;
+        
+        if (!selectedBlock || !selectedBlock.type) {
+          // Если блок не настроен, возвращаем пустой массив (скрываем)
+          return [];
+        }
+        
+        // Возвращаем выбранный блок в формате обычного блока для дальнейшей обработки
+        return [{
+          id: `${block.id}-${conditionMet ? 'true' : 'false'}`,
+          type: selectedBlock.type,
+          hidden: false,
+          data: selectedBlock.data || {}
+        }];
+      }
+      
+      // Обычные блоки возвращаем как есть
+      return [block];
+    });
+    
     // Трансформируем данные для фронтенда
     const transformedPage = {
       id: page.id,
       title: page.title,
-      blocks: page.blocks.map(block => ({
-        id: block.id,
-        type: block.type,
-        hidden: !!block.hidden,
-        // Нормализуем структуру данных в зависимости от типа блока
-        ...(block.type === 'text' && {
-          title: block.data.title,
-          content: block.data.content
-        }),
-        ...(block.type === 'banner' && {
-          ...block.data
-        }),
-        ...(block.type === 'promoBanner' && {
-          // promoBanner мапится на фронтовый banner, данные приходят с бэка
-          type: 'banner',
-          ...BFF_BANNER_STATE
-        }),
-        ...(block.type === 'travelBanner' && {
-          // travelBanner мапится на фронтовый banner, данные приходят с бэка
-          type: 'banner',
-          ...BFF_TRAVEL_BANNER_STATE
-        }),
-        ...(block.type === 'newYearBanner' && {
-          // newYearBanner мапится на фронтовый banner, данные приходят с бэка
-          type: 'banner',
-          ...BFF_NEW_YEAR_BANNER_STATE
-        }),
-        ...(block.type === 'cards' && {
-          title: block.data.title,
-          cards: block.data.cards.map(card => ({
-            id: card.id,
-            title: card.title,
-            description: card.description,
-            imageUrl: card.imageUrl
-          }))
-        }),
-        ...(block.type === 'gallery' && {
-          title: block.data.title,
-          images: block.data.images.map(image => ({
-            id: image.id,
-            url: image.url,
-            alt: image.alt,
-            caption: image.caption
-          }))
-        }),
-        ...(block.type === 'buttons' && {
-          title: block.data.title,
-          description: block.data.description,
-          buttons: block.data.buttons.map(button => ({
-            id: button.id,
-            text: button.text,
-            link: button.link,
-            style: button.style
-          }))
-        }),
-        ...(block.type === 'form' && {
-          title: block.data.title,
-          description: block.data.description,
-          submitText: block.data.submitText || 'Отправить',
-          fields: block.data.fields || []
-        })
-      }))
+      blocks: processedBlocks.map(block => {
+        return {
+          id: block.id,
+          type: block.type,
+          hidden: !!block.hidden,
+          // Нормализуем структуру данных в зависимости от типа блока
+          ...(block.type === 'text' && {
+            title: block.data.title,
+            content: block.data.content
+          }),
+          ...(block.type === 'banner' && {
+            ...block.data
+          }),
+          ...(block.type === 'promoBanner' && {
+            // promoBanner мапится на фронтовый banner, данные приходят с бэка
+            type: 'banner',
+            ...BFF_BANNER_STATE
+          }),
+          ...(block.type === 'travelBanner' && {
+            // travelBanner мапится на фронтовый banner, данные приходят с бэка
+            type: 'banner',
+            ...BFF_TRAVEL_BANNER_STATE
+          }),
+          ...(block.type === 'newYearBanner' && {
+            // newYearBanner мапится на фронтовый banner, данные приходят с бэка
+            type: 'banner',
+            ...BFF_NEW_YEAR_BANNER_STATE
+          }),
+          ...(block.type === 'cards' && {
+            title: block.data.title,
+            cards: block.data.cards.map(card => ({
+              id: card.id,
+              title: card.title,
+              description: card.description,
+              imageUrl: card.imageUrl
+            }))
+          }),
+          ...(block.type === 'gallery' && {
+            title: block.data.title,
+            images: block.data.images.map(image => ({
+              id: image.id,
+              url: image.url,
+              alt: image.alt,
+              caption: image.caption
+            }))
+          }),
+          ...(block.type === 'buttons' && {
+            title: block.data.title,
+            description: block.data.description,
+            buttons: block.data.buttons.map(button => ({
+              id: button.id,
+              text: button.text,
+              link: button.link,
+              style: button.style
+            }))
+          }),
+          ...(block.type === 'form' && {
+            title: block.data.title,
+            description: block.data.description,
+            submitText: block.data.submitText || 'Отправить',
+            fields: block.data.fields || []
+          })
+        };
+      })
     };
     
     res.json(transformedPage);

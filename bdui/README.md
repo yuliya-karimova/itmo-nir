@@ -14,10 +14,6 @@
 ```bash
 docker compose up --build
 ```
-или
-```
-docker compose up --build
-```
 
 После запуска:
 - Публичный сайт: http://localhost:3000
