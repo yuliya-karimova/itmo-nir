@@ -2,6 +2,14 @@
 
 Проект для проведения сравнительного анализа двух подходов к разработке пользовательских интерфейсов согласно методике из НИР2.
 
+## Развернутое приложение
+### Backend-Driven UI
+- Frontend - https://frontend-production-1031.up.railway.app/
+- Admin - https://admin-production-879e.up.railway.app/
+
+### Классический подход
+- Frontend - https://frontend-production-8f14.up.railway.app/
+
 ## Структура проекта
 
 ```
