@@ -789,6 +789,13 @@ docker stats bdui-backend-1 --format "table {{.CPUPerc}}\t{{.MemUsage}}" > ../co
 
 ### BDUI подход
 
+#### Шаг 3.0: Фиксация времени начала
+
+```bash
+# Выполняйте из корня проекта (itmo-nir)
+echo "BDUI S3 Start: $(date -u +"%Y-%m-%dT%H:%M:%SZ")" > comparison_results/bdui/s3_timeline.txt
+```
+
 #### Шаг 3.1: Создание condition блока через админку
 
 1. Откройте админ-панель BDUI (например, `http://localhost:3003`)
@@ -847,10 +854,11 @@ curl http://localhost:3002/api/page/ -H "x-user-variant: B"
 curl https://bff-production-xxxx.up.railway.app/api/page/ -H "x-user-variant: A"
 ```
 
-#### Шаг 3.3: Фиксация времени
+#### Шаг 3.3: Фиксация времени завершения
 
 ```bash
-echo "BDUI S3 Deployed: $(date -u +"%Y-%m-%dT%H:%M:%SZ")" > ../comparison_results/bdui/s3_timeline.txt
+# Выполняйте из корня проекта (itmo-nir)
+echo "BDUI S3 Deployed: $(date -u +"%Y-%m-%dT%H:%M:%SZ")" >> comparison_results/bdui/s3_timeline.txt
 ```
 
 **Ожидаемый TTM**: 2-5 минут (только создание condition блока через админку, без пересборки)
@@ -858,6 +866,13 @@ echo "BDUI S3 Deployed: $(date -u +"%Y-%m-%dT%H:%M:%SZ")" > ../comparison_result
 ---
 
 ### Классический подход
+
+#### Шаг 3.4: Фиксация времени начала
+
+```bash
+# Выполняйте из корня проекта (itmo-nir)
+echo "Classic S3 Start: $(date -u +"%Y-%m-%dT%H:%M:%SZ")" > comparison_results/classic/s3_timeline.txt
+```
 
 #### Шаг 3.5: Реализация A/B теста
 
@@ -911,10 +926,11 @@ curl http://localhost:3011/api/banner-variant -H "x-user-variant: A"
 curl http://localhost:3011/api/banner-variant -H "x-user-variant: B"
 ```
 
-#### Шаг 3.7: Фиксация времени
+#### Шаг 3.7: Фиксация времени завершения
 
 ```bash
-echo "Classic S3 Deployed: $(date -u +"%Y-%m-%dT%H:%M:%SZ")" > ../comparison_results/classic/s3_timeline.txt
+# Выполняйте из корня проекта (itmo-nir)
+echo "Classic S3 Deployed: $(date -u +"%Y-%m-%dT%H:%M:%SZ")" >> comparison_results/classic/s3_timeline.txt
 ```
 
 **Ожидаемый TTM**: 15-30 минут (изменение кода + пересборка + деплой)
