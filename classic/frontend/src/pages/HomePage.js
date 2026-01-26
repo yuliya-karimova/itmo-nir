@@ -1,5 +1,6 @@
 import React from 'react';
 import axios from 'axios';
+import ContactForm from '../components/ContactForm';
 import './HomePage.css';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:3011';
@@ -158,6 +159,9 @@ function HomePage() {
             </div>
           </section>
         )}
+
+        {/* Форма - жестко закодирована на фронтенде */}
+        <ContactForm />
       </main>
       <footer className="footer">
         <div className="container">
