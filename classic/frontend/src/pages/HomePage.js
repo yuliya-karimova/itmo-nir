@@ -8,14 +8,14 @@ const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:3011'
 // Жестко закодированный компонент главной страницы
 // Почти все данные захардкожены на фронтенде, только features получаем с бэка
 function HomePage() {
-  // Данные захардкожены на фронтенде
-  const banner = {
+  // Баннер получаем с бэка для A/B теста (на основе заголовка x-user-variant)
+  const [banner, setBanner] = React.useState({
     title: 'Добро пожаловать!',
     subtitle: 'Используем современные технологии - Classic Frontend Approach Demo',
     imageUrl: 'https://img.freepik.com/free-vector/abstract-paper-style-background_23-2150744378.jpg?semt=ais_hybrid&w=740&q=80',
     buttonText: 'Узнать больше',
     buttonLink: '/info'
-  };
+  });
 
   const about = {
     title: 'О проекте',
@@ -33,21 +33,39 @@ function HomePage() {
   const [error, setError] = React.useState(null);
 
   React.useEffect(() => {
-    const fetchFeatures = async () => {
+    const fetchData = async () => {
       try {
         setLoading(true);
-        const response = await axios.get(`${BACKEND_URL}/api/features`);
-        setFeatures(response.data);
+        
+        // Получаем вариант баннера для A/B теста
+        // Заголовок x-user-variant передается через axios
+        // Для тестирования можно использовать модификатор заголовков (ModHeader) или установить через localStorage
+        const userVariant = localStorage.getItem('x-user-variant') || 'A';
+        try {
+          const bannerResponse = await axios.get(`${BACKEND_URL}/api/banner-variant`, {
+            headers: {
+              'x-user-variant': userVariant
+            }
+          });
+          setBanner(bannerResponse.data);
+        } catch (err) {
+          console.error('Error loading banner variant:', err);
+          // Используем дефолтный баннер при ошибке
+        }
+        
+        // Получаем features
+        const featuresResponse = await axios.get(`${BACKEND_URL}/api/features`);
+        setFeatures(featuresResponse.data);
         setError(null);
       } catch (err) {
-        console.error('Error loading features:', err);
-        setError(`Ошибка загрузки features: ${err.message}`);
+        console.error('Error loading data:', err);
+        setError(`Ошибка загрузки данных: ${err.message}`);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchFeatures();
+    fetchData();
   }, []);
 
   // Структура страницы полностью закодирована здесь

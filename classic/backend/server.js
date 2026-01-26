@@ -76,6 +76,39 @@ app.get('/api/features/hello', async (req, res) => {
   }
 });
 
+// Получить вариант баннера для A/B теста на основе заголовка
+app.get('/api/banner-variant', async (req, res) => {
+  try {
+    const headerName = 'x-user-variant';
+    const headerKey = headerName.toLowerCase();
+    const actualValue = req.headers[headerKey] || req.headers[headerName] || '';
+    
+    // Вариант A (по умолчанию)
+    const variantA = {
+      title: 'Добро пожаловать!',
+      subtitle: 'Используем современные технологии - Classic Frontend Approach Demo',
+      imageUrl: 'https://img.freepik.com/free-vector/abstract-paper-style-background_23-2150744378.jpg?semt=ais_hybrid&w=740&q=80',
+      buttonText: 'Узнать больше',
+      buttonLink: '/info'
+    };
+    
+    // Вариант B (альтернативный)
+    const variantB = {
+      title: 'Альтернативный баннер',
+      subtitle: 'Вы видите вариант B - Classic Frontend Approach',
+      imageUrl: 'https://img.freepik.com/free-vector/abstract-paper-style-background_23-2150744378.jpg?semt=ais_hybrid&w=740&q=80',
+      buttonText: 'Подробнее',
+      buttonLink: '/info'
+    };
+    
+    // Если заголовок равен 'B' или 'b', возвращаем вариант B, иначе вариант A
+    const useVariantB = actualValue.toLowerCase() === 'b';
+    res.json(useVariantB ? variantB : variantA);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // Обновить список фичей
 app.put('/api/features', async (req, res) => {
   try {
