@@ -186,7 +186,7 @@ itmo-nir/
 **Переменные окружения для Admin (Build-time):**
 - `REACT_APP_BACKEND_URL` = `${{backend.RAILWAY_PUBLIC_URL}}`
 
-**Важно:** Публичный домен для админки обязателен - без него вы не сможете открыть админ-панель
+**Важно:** Публичный домен для административной панели обязателен - без него вы не сможете открыть админ-панель
 
 ### Шаг 6: Получение публичных URL
 
@@ -305,7 +305,7 @@ railway up
 
 **Важно:** После получения публичного URL Backend обновите переменную и пересоберите Frontend!
 
-### Шаг 2: Настройка переменных окружения
+### Шаг 4: Настройка переменных окружения
 
 ```bash
 # Backend
@@ -320,13 +320,13 @@ railway variables set REACT_APP_BACKEND_URL=${{backend.RAILWAY_PUBLIC_URL}} --se
 1. Откройте проект "Classic Comparison"
 2. Настройте переменные для backend и frontend
 
-### Шаг 3: Деплой Classic
+### Шаг 5: Деплой Classic
 
 ```bash
 railway up
 ```
 
-### Шаг 4: Получение URL
+### Шаг 6: Получение URL
 
 ```bash
 railway domain
@@ -383,7 +383,7 @@ Railway автоматически назначает порты, но в docker
 4. Выберите репозиторий `itmo-nir` (ваш единственный репозиторий)
 5. **Важно:** В настройках проекта укажите **Root Directory: `bdui/`**
    - Это можно сделать в Settings → Source → Root Directory
-6. Railway автоматически определит docker-compose.yml в папке `bdui/`
+6. Railway не разворачивает многосервисный docker-compose.yml как единый проект, поэтому каждый компонент приложения создаётся как отдельный сервис с указанием соответствующей Root Directory.`
 7. Нажмите "Deploy"
 8. Railway создаст все 4 сервиса автоматически
 
@@ -460,7 +460,7 @@ git commit -m "TTM test: Change banner"
 git push
 ```
 3. Railway автоматически начнет деплой
-4. В Railway Dashboard видно время деплоя
+4. В Railway Dashboard отображается время деплоя
 5. Фиксируем время завершения:
 ```bash
 echo "BDUI Deploy Complete: $(date -u +"%Y-%m-%dT%H:%M:%SZ")" >> ttm_log.txt
@@ -517,7 +517,7 @@ railway restart --service service-name
 
 ## Стоимость
 
-**Бесплатный тариф Railway:**
+**Бесплатный тариф Railway (на момент эксперимента):**
 - $5 кредитов в месяц
 - ~500 часов работы сервисов
 - Достаточно для тестирования и сравнения

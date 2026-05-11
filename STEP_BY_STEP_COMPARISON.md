@@ -287,7 +287,7 @@ EOF
 
 ---
 
-## Сценарий S1.5: Сложная правка - Добавление новой страницы (TTM)
+## Сценарий S2: Сложная правка - Добавление новой страницы (TTM)
 
 ### Цель: Создать новую страницу "О нас" с баннером, текстовым блоком и блоком карточек
 
@@ -297,7 +297,7 @@ EOF
 
 #### Шаг 1.5.1: Фиксация начального времени
 ```bash
-echo "BDUI S1.5 Start: $(date -u +"%Y-%m-%dT%H:%M:%SZ")" > ../comparison_results/bdui/s1.5_timeline.txt
+echo "BDUI S2 Start: $(date -u +"%Y-%m-%dT%H:%M:%SZ")" > ../comparison_results/bdui/s2_timeline.txt
 ```
 
 #### Шаг 1.5.2: Создание новой страницы через админ-панель
@@ -335,7 +335,7 @@ echo "BDUI S1.5 Start: $(date -u +"%Y-%m-%dT%H:%M:%SZ")" > ../comparison_results
 
 # Фиксируем время завершения
 ```
-echo "BDUI S1.5 Change Complete: $(date -u +"%Y-%m-%dT%H:%M:%SZ")" >> ../comparison_results/bdui/s1.5_timeline.txt
+echo "BDUI S2 Change Complete: $(date -u +"%Y-%m-%dT%H:%M:%SZ")" >> ../comparison_results/bdui/s2_timeline.txt
 ```
 
 #### Шаг 1.5.3: Проверка результата
@@ -344,7 +344,7 @@ echo "BDUI S1.5 Change Complete: $(date -u +"%Y-%m-%dT%H:%M:%SZ")" >> ../compari
 open http://localhost:3000/about
 
 # Фиксируем время, когда страница появилась
-echo "BDUI S1.5 Visible: $(date -u +"%Y-%m-%dT%H:%M:%SZ")" >> ../comparison_results/bdui/s1.5_timeline.txt
+echo "BDUI S2 Visible: $(date -u +"%Y-%m-%dT%H:%M:%SZ")" >> ../comparison_results/bdui/s2_timeline.txt
 ```
 
 **Ожидаемый результат BDUI (локально)**: Новая страница доступна сразу после сохранения (0-2 минуты)
@@ -359,7 +359,7 @@ echo "BDUI S1.5 Visible: $(date -u +"%Y-%m-%dT%H:%M:%SZ")" >> ../comparison_resu
 
 #### Шаг 1.5.4: Фиксация начального времени
 ```bash
-echo "Classic S1.5 Start: $(date -u +"%Y-%m-%dT%H:%M:%SZ")" > ../comparison_results/classic/s1.5_timeline.txt
+echo "Classic S2 Start: $(date -u +"%Y-%m-%dT%H:%M:%SZ")" > ../comparison_results/classic/s2_timeline.txt
 ```
 
 #### Шаг 1.5.5: Создание новой страницы в коде
@@ -468,13 +468,13 @@ docker compose restart frontend
 
 6. Фиксируем время завершения:
 ```bash
-echo "Classic S1.5 Build Complete: $(date -u +"%Y-%m-%dT%H:%M:%SZ")" >> ../comparison_results/classic/s1.5_timeline.txt
+echo "Classic S2 Build Complete: $(date -u +"%Y-%m-%dT%H:%M:%SZ")" >> ../comparison_results/classic/s2_timeline.txt
 ```
 
 #### Шаг 1.5.6: Проверка результата
 ```bash
 open http://localhost:3010/about
-echo "Classic S1.5 Visible: $(date -u +"%Y-%m-%dT%H:%M:%SZ")" >> ../comparison_results/classic/s1.5_timeline.txt
+echo "Classic S2 Visible: $(date -u +"%Y-%m-%dT%H:%M:%SZ")" >> ../comparison_results/classic/s2_timeline.txt
 ```
 
 **Ожидаемый результат Classic (локально)**: Требуется создание нового компонента, пересборка (20-40 минут)
@@ -488,12 +488,12 @@ echo "Classic S1.5 Visible: $(date -u +"%Y-%m-%dT%H:%M:%SZ")" >> ../comparison_r
 ### Шаг 1.5.7: Сравнение результатов
 
 ```bash
-cat > ../comparison_results/s1.5_comparison.txt << EOF
-Сценарий S1.5: Добавление новой страницы
+cat > ../comparison_results/s2_comparison.txt << EOF
+Сценарий S2: Добавление новой страницы
 
 BDUI (локально):
-- Время начала: [из s1.5_timeline.txt]
-- Время завершения: [из s1.5_timeline.txt]
+- Время начала: [из s2_timeline.txt]
+- Время завершения: [из s2_timeline.txt]
 - TTM: [разница в минутах]
 - Требовалась пересборка: НЕТ
 - Создание нового компонента: НЕТ
@@ -503,8 +503,8 @@ BDUI (на облаке, через админ-панель):
 - Требовалась пересборка: НЕТ
 
 Classic (локально):
-- Время начала: [из s1.5_timeline.txt]
-- Время завершения: [из s1.5_timeline.txt]
+- Время начала: [из s2_timeline.txt]
+- Время завершения: [из s2_timeline.txt]
 - TTM: [разница в минутах]
 - Требовалась пересборка: ДА
 - Создание нового компонента: ДА
@@ -526,7 +526,7 @@ EOF
 
 ---
 
-## Сценарий S2: Новая форма (Трафик, производительность, ресурсы)
+## Сценарий S3: Новая форма (TTM, трафик, производительность, ресурсы)
 
 ### Цель: Добавить форму из 5 полей с валидацией
 
@@ -534,7 +534,12 @@ EOF
 
 ### BDUI подход
 
-#### Шаг 2.1: Создание нового типа блока
+#### Шаг 2.1: Фиксация начального времени
+```bash
+echo "BDUI S3 Start: $(date -u +"%Y-%m-%dT%H:%M:%SZ")" > ../comparison_results/bdui/s3_timeline.txt
+```
+
+#### Шаг 2.2: Создание нового типа блока
 
 1. Добавляем контракт в `bdui/backend/contracts.js`:
 ```javascript
@@ -553,8 +558,12 @@ EOF
 2. Создаем компонент `bdui/frontend/src/blocks/FormBlock.js`
 3. Добавляем в `BlockRenderer.js`
 4. Пересобираем фронтенд (один раз для нового компонента)
+5. Фиксируем время завершения:
+```bash
+echo "BDUI S3 Change Complete: $(date -u +"%Y-%m-%dT%H:%M:%SZ")" >> ../comparison_results/classic/s3_timeline.txt
+```
 
-#### Шаг 2.2: Измерение трафика
+#### Шаг 2.3: Измерение трафика
 
 **Перед изменением:**
 ```bash
@@ -564,13 +573,13 @@ EOF
 # Открываем страницу http://localhost:3000
 # Сохраняем HAR файл: Right-click → Save all as HAR
 # Копируем в results
-cp ~/Downloads/*.har ../comparison_results/artifacts/har/bdui_s2_before.har
+cp ~/Downloads/*.har ../comparison_results/artifacts/har/bdui_s3_before.har
 ```
 
 **После добавления формы:**
 ```bash
 # Повторяем процесс
-# Сохраняем как bdui_s2_after.har
+# Сохраняем как bdui_s3_after.har
 ```
 
 **Анализ HAR файла:**
@@ -582,7 +591,7 @@ cp ~/Downloads/*.har ../comparison_results/artifacts/har/bdui_s2_before.har
 # - Размер JSON с описанием страницы
 ```
 
-#### Шаг 2.3: Измерение производительности
+#### Шаг 2.4: Измерение производительности
 
 **Перед добавлением формы:**
 
@@ -595,13 +604,13 @@ cp ~/Downloads/*.har ../comparison_results/artifacts/har/bdui_s2_before.har
 7. Сохраните результаты:
    - Скриншот метрик
    - Или экспортируйте JSON: нажмите на три точки → "Save as JSON"
-   - Сохраните как `bdui_s2_before_lighthouse.json` в `comparison_results/artifacts/lighthouse/`
+   - Сохраните как `bdui_s3_before_lighthouse.json` в `comparison_results/artifacts/lighthouse/`
 
 **После добавления формы:**
 
 1. Откройте ту же страницу, но уже с формой
 2. Повторите шаги 2-7 выше
-3. Сохраните результаты как `bdui_s2_after_lighthouse.json`
+3. Сохраните результаты как `bdui_s3_after_lighthouse.json`
 
 **Метрики для записи и сравнения:**
 
@@ -622,17 +631,17 @@ cp ~/Downloads/*.har ../comparison_results/artifacts/har/bdui_s2_before.har
 # Перед добавлением формы
 lighthouse https://frontend-production-xxxx.up.railway.app/ \
   --output=json \
-  --output-path=../comparison_results/artifacts/lighthouse/bdui_s2_before_lighthouse.json \
+  --output-path=../comparison_results/artifacts/lighthouse/bdui_s3_before_lighthouse.json \
   --chrome-flags="--headless"
 
 # После добавления формы
 lighthouse https://frontend-production-xxxx.up.railway.app/ \
   --output=json \
-  --output-path=../comparison_results/artifacts/lighthouse/bdui_s2_after_lighthouse.json \
+  --output-path=../comparison_results/artifacts/lighthouse/bdui_s3_after_lighthouse.json \
   --chrome-flags="--headless"
 ```
 
-#### Шаг 2.4: Измерение ресурсов
+#### Шаг 2.5: Измерение ресурсов
 
 **CPU и RAM на клиенте:**
 
@@ -685,7 +694,7 @@ lighthouse https://frontend-production-xxxx.up.railway.app/ \
 - Для **CPU**: используйте TBT из Lighthouse (уже измерено) или метрики сервера Railway
 
 4. Экспортируйте профиль: Right-click на графике → "Save profile"
-5. Сохраните как `bdui_s2_before_performance.json` в `comparison_results/artifacts/profiles/`
+5. Сохраните как `bdui_s3_before_performance.json` в `comparison_results/artifacts/profiles/`
 6. Запишите пиковые значения:
     - Пик CPU: ___% (максимальная высота графика CPU)
     - Пик RAM: ___ MB (максимальная высота графика Memory)
@@ -694,7 +703,7 @@ lighthouse https://frontend-production-xxxx.up.railway.app/ \
 
 1. Откройте ту же страницу, но уже с формой
 2. Повторите шаги 2-11 выше
-3. Сохраните профиль как `bdui_s2_after_performance.json`
+3. Сохраните профиль как `bdui_s3_after_performance.json`
 4. Запишите пиковые значения:
     - Пик CPU: ___%
     - Пик RAM: ___ MB
@@ -748,20 +757,29 @@ docker stats bdui-backend-1 --format "table {{.CPUPerc}}\t{{.MemUsage}}" > ../co
 
 ### Классический подход
 
-#### Шаг 2.5: Создание формы
+#### Шаг 2.6: Фиксация начального времени
+```bash
+echo "Classic S3 Start: $(date -u +"%Y-%m-%dT%H:%M:%SZ")" > ../comparison_results/classic/s3_timeline.txt
+```
+
+#### Шаг 2.7: Создание формы
 
 1. Создаем компонент `classic/frontend/src/components/ContactForm.js`
 2. Добавляем валидацию
 3. Интегрируем в нужную страницу
 4. Пересобираем фронтенд
+5. Фиксируем время завершения:
+```bash
+echo "Classic S3 Build Complete: $(date -u +"%Y-%m-%dT%H:%M:%SZ")" >> ../comparison_results/classic/s3_timeline.txt
+```
 
-#### Шаг 2.6-2.8: Повторяем измерения
+#### Шаг 2.8-2.10: Повторяем измерения
 
 Те же шаги, что для BDUI, но для `http://localhost:3010`
 
 ---
 
-### Шаг 2.9: Сравнение результатов
+### Шаг 2.12: Сравнение результатов
 
 Создаем таблицу:
 
@@ -773,6 +791,7 @@ docker stats bdui-backend-1 --format "table {{.CPUPerc}}\t{{.MemUsage}}" > ../co
 | TTI (мс) | | | |
 | Пик CPU (%) | | | |
 | Пик RAM (MB) | | | |
+| TTM (мс) | | | |
 
 **Оценка по шкале 1-5**:
 - Трафик: BDUI может быть больше из-за описания UI
@@ -781,7 +800,7 @@ docker stats bdui-backend-1 --format "table {{.CPUPerc}}\t{{.MemUsage}}" > ../co
 
 ---
 
-## Сценарий S3: A/B-эксперимент (TTM, поддерживаемость)
+## Сценарий S4: A/B-эксперимент (TTM, поддерживаемость)
 
 ### Цель: Показывать 50% пользователей альтернативный баннер
 
@@ -793,7 +812,7 @@ docker stats bdui-backend-1 --format "table {{.CPUPerc}}\t{{.MemUsage}}" > ../co
 
 ```bash
 # Выполняйте из корня проекта (itmo-nir)
-echo "BDUI S3 Start: $(date -u +"%Y-%m-%dT%H:%M:%SZ")" > comparison_results/bdui/s3_timeline.txt
+echo "BDUI S4 Start: $(date -u +"%Y-%m-%dT%H:%M:%SZ")" > comparison_results/bdui/s4_timeline.txt
 ```
 
 #### Шаг 3.1: Создание condition блока через админку
@@ -858,7 +877,7 @@ curl https://bff-production-xxxx.up.railway.app/api/page/ -H "x-user-variant: A"
 
 ```bash
 # Выполняйте из корня проекта (itmo-nir)
-echo "BDUI S3 Deployed: $(date -u +"%Y-%m-%dT%H:%M:%SZ")" >> comparison_results/bdui/s3_timeline.txt
+echo "BDUI S4 Deployed: $(date -u +"%Y-%m-%dT%H:%M:%SZ")" >> comparison_results/bdui/s4_timeline.txt
 ```
 
 **Ожидаемый TTM**: 2-5 минут (только создание condition блока через админку, без пересборки)
@@ -871,7 +890,7 @@ echo "BDUI S3 Deployed: $(date -u +"%Y-%m-%dT%H:%M:%SZ")" >> comparison_results/
 
 ```bash
 # Выполняйте из корня проекта (itmo-nir)
-echo "Classic S3 Start: $(date -u +"%Y-%m-%dT%H:%M:%SZ")" > comparison_results/classic/s3_timeline.txt
+echo "Classic S4 Start: $(date -u +"%Y-%m-%dT%H:%M:%SZ")" > comparison_results/classic/s4_timeline.txt
 ```
 
 #### Шаг 3.5: Реализация A/B теста
@@ -930,7 +949,7 @@ curl http://localhost:3011/api/banner-variant -H "x-user-variant: B"
 
 ```bash
 # Выполняйте из корня проекта (itmo-nir)
-echo "Classic S3 Deployed: $(date -u +"%Y-%m-%dT%H:%M:%SZ")" >> comparison_results/classic/s3_timeline.txt
+echo "Classic S4 Deployed: $(date -u +"%Y-%m-%dT%H:%M:%SZ")" >> comparison_results/classic/s4_timeline.txt
 ```
 
 **Ожидаемый TTM**: 15-30 минут (изменение кода + пересборка + деплой)
@@ -958,7 +977,7 @@ echo "Classic S3 Deployed: $(date -u +"%Y-%m-%dT%H:%M:%SZ")" >> comparison_resul
 
 ---
 
-## Сценарий S4: Оффлайн-режим (Производительность, ресурсы)
+## Сценарий S5: Оффлайн-режим (Производительность, ресурсы)
 
 ### Цель: Открыть страницу без сети
 
@@ -1137,8 +1156,8 @@ open http://localhost:3010
 | Сценарий | BDUI (баллы) | Classic (баллы) | Победитель |
 |----------|--------------|-----------------|------------|
 | S1: Простая правка (изменить текст + добавить блок) | 5 | 2 | BDUI |
-| S1.5: Сложная правка (новая страница) | 5 | 1 | BDUI |
-| S3: A/B тест | 5 | 3 | BDUI |
+| S2: Сложная правка (новая страница) | 5 | 1 | BDUI |
+| S4: A/B тест | 5 | 3 | BDUI |
 | **Среднее** | **5** | **2** | **BDUI** |
 
 ## Параметр 2: Объём передаваемых данных
@@ -1202,7 +1221,7 @@ open http://localhost:3010
 
 **Созданные графики:**
 - `comparison_chart.png` - сравнение по всем параметрам (TTM, Трафик, Производительность, Ресурсы, Оффлайн, Поддержка)
-- `ttm_comparison.png` - детальное сравнение TTM по сценариям (S1, S1.5, S3)
+- `ttm_comparison.png` - детальное сравнение TTM по сценариям (S1, S2, S4)
 
 **Для запуска скрипта:**
 
@@ -1213,14 +1232,14 @@ import numpy as np
 
 parameters = ['TTM', 'Трафик', 'Производительность', 'Ресурсы', 'Поддержка']
 bdui_scores = [5, 3, 3, 3, 3]
-classic_scores = [2, 5, 5, 4, 4]
+classic_scores = [1.5, 5, 5, 5, 5, 3]
 
 x = np.arange(len(parameters))
 width = 0.35
 
 fig, ax = plt.subplots()
 bars1 = ax.bar(x - width/2, bdui_scores, width, label='BDUI')
-bars2 = ax.bar(x + width/2, classic_scores, width, label='Classic')
+bars3 = ax.bar(x + width/2, classic_scores, width, label='Classic')
 
 ax.set_ylabel('Баллы (1-5)')
 ax.set_title('Сравнение BDUI и Classic подходов')
@@ -1238,7 +1257,7 @@ plt.savefig('comparison_chart.png')
 ✅ **Выполнено:** Все артефакты сохранены в `comparison_results/artifacts/`:
 
 **Сохраненные артефакты:**
-- HAR файлы: `artifacts/har/` (bdui_s2_before.har, bdui_s2_after.har, classic_s2_before.har, classic_s2_after.har)
+- HAR файлы: `artifacts/har/` (bdui_s3_before.har, bdui_s3_after.har, classic_s3_before.har, classic_s3_after.har)
 - Lighthouse отчеты: `artifacts/lighthouse/` (JSON и PDF для обоих подходов)
 - Performance профили: `artifacts/performance/` (скриншоты DevTools)
 - Оффлайн скриншоты: `artifacts/offline/` (bdui.png)
@@ -1258,15 +1277,15 @@ tar -czf comparison_results_$(date +%Y%m%d).tar.gz comparison_results/
 
 - [x] Все 4 сценария выполнены для обоих подходов
   - [x] S1: Простая правка (TTM измерен)
-  - [x] S1.5: Сложная правка - новая страница (TTM измерен)
-  - [x] S2: Добавление формы (трафик, производительность, ресурсы измерены)
-  - [x] S3: A/B тест (TTM измерен)
-  - [x] S4: Оффлайн режим (реализован и протестирован)
+  - [x] S2: Сложная правка - новая страница (TTM измерен)
+  - [x] S3: Добавление формы (трафик, производительность, ресурсы измерены)
+  - [x] S4: A/B тест (TTM измерен)
+  - [x] S5: Оффлайн режим (реализован и протестирован)
 - [x] Все метрики измерены и записаны
-  - [x] TTM для S1, S1.5, S3
-  - [x] Трафик (HAR файлы) для S2
-  - [x] Производительность (Lighthouse) для S2
-  - [x] Ресурсы (CPU, RAM) для S2
+  - [x] TTM для S1, S2, S4
+  - [x] Трафик (HAR файлы) для S3
+  - [x] Производительность (Lighthouse) для S3
+  - [x] Ресурсы (CPU, RAM) для S3
 - [x] Создана сводная таблица с оценками (`comparison_results/final_comparison.md`)
 - [x] Построены графики сравнения (`comparison_chart.png`, `ttm_comparison.png`)
 - [x] Сохранены все артефакты (HAR, Lighthouse, профили) в `comparison_results/artifacts/`

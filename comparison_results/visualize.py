@@ -9,7 +9,7 @@ import numpy as np
 # Параметры сравнения
 parameters = ['TTM', 'Трафик', 'Производительность', 'Ресурсы', 'Оффлайн', 'Поддержка']
 bdui_scores = [5, 3, 4, 4, 5, 5]
-classic_scores = [2, 5, 5, 5, 5, 3]
+classic_scores = [1.5, 5, 5, 5, 5, 3]
 
 # Создаем график
 x = np.arange(len(parameters))
@@ -49,9 +49,9 @@ print('График сохранен в comparison_chart.png')
 # Создаем второй график - сравнение TTM
 fig2, ax2 = plt.subplots(figsize=(10, 6))
 
-scenarios = ['S1: Простая\nправка', 'S1.5: Новая\nстраница', 'S3: A/B тест']
-bdui_ttm = [1.0, 1.8, 1.68]
-classic_ttm = [11.3, 23.8, 22.05]
+scenarios = ['S1: Простая\nправка', 'S2: Новая\nстраница', 'S3: Форма', 'S4: A/B тест']
+bdui_ttm = [1.0, 1.8, 3.18, 1.68]
+classic_ttm = [11.3, 23.8, 28.40, 22.05]
 
 x2 = np.arange(len(scenarios))
 bars3 = ax2.bar(x2 - width/2, bdui_ttm, width, label='BDUI', color='#3498db', alpha=0.8)

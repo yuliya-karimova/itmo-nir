@@ -349,7 +349,7 @@ DEPLOY_TIME=$(curl -s -H "Authorization: Bearer $VERCEL_TOKEN" \
 
 5. **Проведите измерения:**
    - S1: Изменение через админ-панель (BDUI) vs изменение кода (Classic)
-   - S1.5: Создание новой страницы
+   - S2: Создание новой страницы
    - Фиксируйте время коммита, деплоя, появления изменений
 
 6. **Сравните результаты:**
@@ -411,7 +411,7 @@ on:
   workflow_dispatch:
     inputs:
       test_scenario:
-        description: 'Test scenario (S1, S1.5)'
+        description: 'Test scenario (S1, S2)'
         required: true
 
 jobs:
