@@ -23,9 +23,14 @@ bars2 = ax.bar(x + width/2, classic_scores, width, label='Classic', color='#95a5
 for bars in [bars1, bars2]:
     for bar in bars:
         height = bar.get_height()
-        ax.text(bar.get_x() + bar.get_width()/2., height,
-                f'{int(height)}',
-                ha='center', va='bottom', fontweight='bold')
+        ax.text(
+            bar.get_x() + bar.get_width() / 2.,
+            height,
+            f'{height:.1f}',
+            ha='center',
+            va='bottom',
+            fontweight='bold'
+        )
 
 ax.set_ylabel('Баллы (1-5)', fontsize=12)
 ax.set_title('Сравнение BDUI и Classic подходов', fontsize=14, fontweight='bold')
@@ -38,9 +43,14 @@ ax.grid(axis='y', alpha=0.3, linestyle='--')
 # Добавляем итоговую сумму
 total_bdui = sum(bdui_scores)
 total_classic = sum(classic_scores)
-ax.text(0.5, 0.02, f'Итого: BDUI {total_bdui}/30, Classic {total_classic}/30',
-        transform=ax.transAxes, ha='center', fontsize=10,
-        bbox=dict(boxstyle='round', facecolor='wheat', alpha=0.5))
+ax.text(
+    0.5, 0.02,
+    f'Итого: BDUI {total_bdui:.0f}/30, Classic {total_classic:.1f}/30',
+    transform=ax.transAxes,
+    ha='center',
+    fontsize=10,
+    bbox=dict(boxstyle='round', facecolor='wheat', alpha=0.5)
+)
 
 plt.tight_layout()
 plt.savefig('comparison_chart.png', dpi=300, bbox_inches='tight')
